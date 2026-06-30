@@ -5,15 +5,7 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'data.json');
-const PASSWORD = process.env.PUBGOLF_PASSWORD;
-
-if (!PASSWORD) {
-  console.error('❌ Geen PUBGOLF_PASSWORD ingesteld.');
-  console.error('   Stel een wachtwoord in via environment variable:');
-  console.error('   Windows (PowerShell): $env:PUBGOLF_PASSWORD="jouwwachtwoord"');
-  console.error('   Render.com: zet in Environment Variables');
-  process.exit(1);
-}
+const PASSWORD = process.env.PUBGOLF_PASSWORD || 'banaan02';
 
 app.use(express.json());
 
