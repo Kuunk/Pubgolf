@@ -5,13 +5,32 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, 'data.json');
+const PASSWORD = process.env.PUBGOLF_PASSWORD;
+
+if (!PASSWORD) {
+  console.error('❌ Geen PUBGOLF_PASSWORD ingesteld.');
+  console.error('   Stel een wachtwoord in via environment variable:');
+  console.error('   Windows (PowerShell): $env:PUBGOLF_PASSWORD="jouwwachtwoord"');
+  console.error('   Render.com: zet in Environment Variables');
+  process.exit(1);
+}
 
 app.use(express.json());
 
-// Serve static files (index.html, etc.)
+// Serve static files
 app.use(express.static(__dirname));
 
-// GET /api/data — retrieve scores + toggles
+// POST /api/login — check password
+app.post('/api/login', (req, res) => {
+  const { password } = req.body || {};
+  if (password === PASSWORD) {
+    res.json({ ok: true });
+  } else {
+    res.status(401).json({ ok: false });
+  }
+});
+
+// GET /api/data
 app.get('/api/data', (req, res) => {
   try {
     const raw = fs.readFileSync(DATA_FILE, 'utf-8');
@@ -21,13 +40,12 @@ app.get('/api/data', (req, res) => {
   }
 });
 
-// POST /api/data — save scores + toggles
+// POST /api/data
 app.post('/api/data', (req, res) => {
   const data = req.body;
   if (!data || typeof data !== 'object') {
     return res.status(400).json({ error: 'invalid data' });
   }
-  // Ensure required fields
   const toStore = {
     scores: data.scores || {},
     toggles: data.toggles || {},
@@ -38,7 +56,7 @@ app.post('/api/data', (req, res) => {
   res.json({ ok: true, version: toStore.version });
 });
 
-// 404 → serve index.html (SPA fallback)
+// All other routes → index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });

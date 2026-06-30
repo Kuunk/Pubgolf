@@ -798,23 +798,123 @@
   .toast.show { opacity: 1; }
 
   /* ── Reset ── */
-  .reset-all-btn {
-    position: fixed;
-    bottom: 86px;
-    left: 24px;
-    background: rgba(255,255,255,0.02);
+  .reset-btn {
+    width: 100%;
+    margin-top: 14px;
+    padding: 12px;
+    background: transparent;
     color: var(--gray-mid);
-    border: 1px solid var(--border);
-    padding: 6px 10px;
-    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-sm);
     font-family: var(--font);
-    font-size: 0.55rem;
-    font-weight: 500;
+    font-size: 0.7rem;
+    font-weight: 600;
     cursor: pointer;
-    opacity: 0.3;
-    transition: opacity .2s;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
-  .reset-all-btn:active { opacity: 0.8; }
+  .reset-btn:active { border-color: rgba(255,90,90,0.2); color: var(--error); }
+
+  /* ── Login Overlay ── */
+  .login-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    transition: opacity .4s ease;
+  }
+  .login-overlay.hidden { opacity: 0; pointer-events: none; }
+  .login-box {
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+  }
+  .login-box .lb-logo {
+    width: 56px;
+    height: 56px;
+    background: var(--accent);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+  }
+  .login-box .lb-logo span {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #0D0F10;
+  }
+  .login-box h2 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.3px;
+  }
+  .login-box p {
+    font-size: 0.8rem;
+    color: var(--gray-mid);
+    margin-top: 6px;
+  }
+  .login-box .lb-input {
+    width: 100%;
+    margin-top: 24px;
+    padding: 16px 18px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    background: var(--card);
+    color: var(--white);
+    font-family: var(--font);
+    font-size: 1rem;
+    font-weight: 600;
+    outline: none;
+    transition: border .2s;
+    text-align: center;
+  }
+  .login-box .lb-input:focus { border-color: var(--accent); }
+  .login-box .lb-input::placeholder { color: var(--gray-mid); font-weight: 500; }
+  .login-box .lb-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    background: var(--accent);
+    color: #0D0F10;
+    font-family: var(--font);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .login-box .lb-btn:active { opacity: 0.8; }
+  .login-box .lb-error {
+    font-size: 0.75rem;
+    color: var(--error);
+    margin-top: 10px;
+    min-height: 20px;
+  }
+  .login-box .lb-hint {
+    font-size: 0.6rem;
+    color: var(--gray-mid);
+    margin-top: 16px;
+    opacity: 0.4;
+  }
+  .login-box .lb-lock {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.65rem;
+    color: var(--gray-mid);
+    margin-top: 20px;
+    opacity: 0.3;
+  }
 
   /* ── Scrollbar ── */
   ::-webkit-scrollbar { width: 3px; }
@@ -826,6 +926,19 @@
 </style>
 </head>
 <body>
+
+<!-- Login Overlay -->
+<div class="login-overlay hidden" id="loginOverlay">
+  <div class="login-box">
+    <div class="lb-logo"><span>H</span></div>
+    <h2>Score invoeren</h2>
+    <p>Voer het wachtwoord in om scores te beheren</p>
+    <input class="lb-input" type="password" id="pwInput" placeholder="Wachtwoord" autocomplete="off" onkeydown="if(event.key==='Enter')login()">
+    <button class="lb-btn" onclick="login()">Ontgrendel</button>
+    <div class="lb-error" id="pwError"></div>
+    <div class="lb-lock"><i data-lucide="lock" style="width:12px;height:12px;"></i> Alleen voor organisatie</div>
+  </div>
+</div>
 
 <div class="app-wrap">
 
@@ -863,6 +976,9 @@
       <div id="score-teams" class="view-sub active">
         <div class="view-title">&#9679; Selecteer team</div>
         <div class="team-grid" id="team-grid"></div>
+        <button class="reset-btn" onclick="resetAll()">
+          <i data-lucide="refresh-cw"></i> Reset alle scores
+        </button>
       </div>
       <div id="score-holes" class="view-sub">
         <button class="back-btn" onclick="showTeams()">
@@ -908,7 +1024,6 @@
 </div>
 
 <div class="toast" id="toast"></div>
-<button class="reset-all-btn" onclick="resetAll()">Reset</button>
 
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script>
@@ -1332,8 +1447,47 @@ function renderLeaderboard() {
   }).join('');
 }
 
+// ========== AUTH ==========
+function isLoggedIn() {
+  try { return sessionStorage.getItem('pubgolf_auth') === '1'; } catch { return false; }
+}
+
+async function login() {
+  const pw = document.getElementById('pwInput').value;
+  const error = document.getElementById('pwError');
+  if (!pw) { error.textContent = 'Voer een wachtwoord in'; return; }
+  try {
+    const r = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw }),
+    });
+    const data = await r.json();
+    if (data.ok) {
+      try { sessionStorage.setItem('pubgolf_auth', '1'); } catch {}
+      document.getElementById('loginOverlay').classList.add('hidden');
+      switchView('score');
+    } else {
+      error.textContent = 'Verkeerd wachtwoord';
+      document.getElementById('pwInput').value = '';
+      document.getElementById('pwInput').focus();
+    }
+  } catch {
+    error.textContent = 'Kan geen verbinding maken met server';
+  }
+}
+
 // ========== NAVIGATION ==========
 function switchView(view) {
+  if (view === 'score') {
+    if (!isLoggedIn()) {
+      document.getElementById('loginOverlay').classList.remove('hidden');
+      document.getElementById('pwInput').value = '';
+      document.getElementById('pwError').textContent = '';
+      document.getElementById('pwInput').focus();
+      return;
+    }
+  }
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('view-' + view).classList.add('active');
