@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HHS PubGolf — Scoreboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D0F10;
+    --card: #16191C;
+    --accent: #C8E000;
+    --accent-glow: rgba(200,224,0,0.15);
+    --secondary: #A3BD00;
+    --white: #FFFFFF;
+    --gray-light: #D8D8D8;
+    --gray-mid: #8E9398;
+    --success: #3DDC84;
+    --error: #FF5A5A;
+    --border: rgba(255,255,255,0.06);
+    --radius: 20px;
+    --radius-sm: 14px;
+    --radius-xs: 10px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--white);
+    min-height: 100vh;
+    padding: 0;
+    padding-bottom: 96px;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .app-wrap {
+    max-width: 430px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* ── Header ── */
+  .header {
+    padding: 20px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-logo {
+    width: 40px;
+    height: 40px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .header-logo span {
+    font-family: var(--font);
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #0D0F10;
+    letter-spacing: 0;
+  }
+  .header-text .ht-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+  }
+  .header-text .ht-title .ht-accent { color: var(--accent); }
+  .header-text .ht-sub {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--gray-mid);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+  .header-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+  .header-status .hs-label {
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gray-mid);
+  }
+  .header-status .hs-value {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .header-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 20px 0;
+  }
+
+  /* ── Views ── */
+  .view { display: none; }
+  .view.active { display: flex; flex-direction: column; flex: 1; }
+  .view-sub { display: none; }
+  .view-sub.active { display: block; animation: fadeUp .3s ease; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  .content {
+    flex: 1;
+    padding: 16px 20px;
+  }
+
+  .view-title {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gray-mid);
+    margin-bottom: 14px;
+  }
+
+  /* ── Bottom Nav ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    gap: 2px;
+    background: rgba(22,25,28,0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 4px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    max-width: 430px;
+    width: calc(100% - 40px);
+  }
+  .nav-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 10px 12px 8px;
+    border: none;
+    border-radius: 14px;
+    font-family: var(--font);
+    font-size: 0.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all .2s ease;
+    background: transparent;
+    color: var(--gray-mid);
+  }
+  .nav-btn i {
+    width: 22px;
+    height: 22px;
+    transition: all .2s;
+  }
+  .nav-btn.active {
+    background: rgba(200,224,0,0.1);
+    color: var(--accent);
+  }
+  .nav-btn.active i { color: var(--accent); }
+  .nav-btn:not(.active):active { color: var(--gray-light); }
+
+  /* ── Teams Grid ── */
+  .team-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  @media (min-width: 500px) {
+    .team-grid { grid-template-columns: 1fr 1fr; }
+  }
+  .team-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    cursor: pointer;
+    transition: all .2s ease;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+  .team-card:active { transform: scale(0.98); }
+  .team-card.has-scores { border-color: rgba(200,224,0,0.15); }
+  .team-card-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    flex: 1;
+  }
+  .team-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--gray-light);
+  }
+  .team-card.has-scores .team-avatar {
+    border-color: rgba(200,224,0,0.2);
+    color: var(--accent);
+  }
+  .team-card-info {
+    min-width: 0;
+  }
+  .team-card-info .tc-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.2px;
+  }
+  .team-card-info .tc-players {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gray-mid);
+    margin-top: 1px;
+  }
+  .team-card-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .team-card-right .tc-score {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .team-card-right .tc-label {
+    font-size: 0.5rem;
+    font-weight: 600;
+    color: var(--gray-mid);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  /* ── Back button ── */
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--gray-light);
+    border: none;
+    padding: 6px 0;
+    font-family: var(--font);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: opacity .15s;
+  }
+  .back-btn:active { opacity: 0.6; }
+  .back-btn i { width: 18px; height: 18px; }
+
+  /* ── Score Header (team info in scoring mode) ── */
+  .score-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .score-header .sh-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .score-header .sh-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(200,224,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .score-header .sh-info .sh-name {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+  .score-header .sh-info .sh-players {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--gray-mid);
+    margin-top: 1px;
+  }
+  .score-header .sh-total {
+    text-align: right;
+  }
+  .score-header .sh-total .sh-total-label {
+    font-size: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gray-mid);
+  }
+  .score-header .sh-total .sh-total-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  /* ── Hole Cards ── */
+  .hole-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .hole-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: all .2s;
+  }
+  .hole-card.hole-expanded {
+    border-color: rgba(200,224,0,0.08);
+  }
+  .hole-card .hole-main {
+    padding: 16px 18px;
+    display: grid;
+    grid-template-columns: 38px 1fr 44px;
+    gap: 10px;
+    align-items: center;
+  }
+  .hole-main .hole-nr {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--gray-mid);
+    text-align: center;
+    line-height: 1;
+  }
+  .hole-card.hole-expanded .hole-main .hole-nr { color: var(--accent); }
+  .hole-main .hole-info .hole-pub {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--white);
+    cursor: pointer;
+    letter-spacing: -0.2px;
+    transition: color .15s;
+  }
+  .hole-main .hole-info .hole-pub:active { color: var(--accent); }
+  .hole-main .hole-info .hole-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 3px;
+    flex-wrap: wrap;
+  }
+  .hole-meta .hole-challenge {
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: var(--gray-mid);
+    background: rgba(255,255,255,0.04);
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+  }
+  .hole-meta .hole-diff {
+    font-size: 0.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 2px 7px;
+    border-radius: 3px;
+  }
+  .hole-diff.normaal { background: rgba(61,220,132,0.12); color: var(--success); }
+  .hole-diff.fanatiek { background: rgba(255,90,90,0.1); color: var(--error); }
+  .hole-diff.chaos { background: rgba(200,224,0,0.08); color: var(--accent); }
+  .hole-main .hole-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+  .hole-main .hole-score input {
+    width: 100%;
+    padding: 8px 2px;
+    border: 2px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-xs);
+    background: rgba(255,255,255,0.03);
+    color: var(--white);
+    font-family: var(--font);
+    font-size: 1rem;
+    font-weight: 800;
+    text-align: center;
+    outline: none;
+    transition: all .2s;
+    -moz-appearance: textfield;
+  }
+  .hole-main .hole-score input::-webkit-outer-spin-button,
+  .hole-main .hole-score input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .hole-main .hole-score input:focus { border-color: var(--accent); }
+  .hole-main .hole-score input::placeholder { color: rgba(255,255,255,0.12); font-weight: 600; }
+  .hole-main .hole-score .adj-badge {
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 4px;
+    line-height: 1.4;
+  }
+  .hole-main .hole-score .adj-badge.neg { color: var(--success); background: rgba(61,220,132,0.1); }
+  .hole-main .hole-score .adj-badge.pos { color: var(--error); background: rgba(255,90,90,0.08); }
+  .hole-main .hole-score .adj-badge.zero { color: var(--gray-mid); background: rgba(255,255,255,0.03); }
+
+  /* ── Challenge Panel ── */
+  .challenge-panel {
+    padding: 0 18px 16px;
+    display: none;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    animation: fadeUp .25s ease;
+  }
+  .challenge-panel.open { display: block; }
+  .challenge-panel .cp-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-top: 14px;
+  }
+  .challenge-panel .cp-desc {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gray-mid);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .challenge-panel .cp-scoring {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--gray-mid);
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px;
+  }
+  .challenge-panel .cp-scoring strong { color: var(--gray-light); font-weight: 600; }
+
+  .cp-section {
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin: 12px 0 4px;
+  }
+  .cp-section.bonus { color: var(--success); }
+  .cp-section.penalty { color: var(--error); }
+
+  .cp-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background .1s;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .cp-item:active { background: rgba(255,255,255,0.02); }
+  .cp-item .cp-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--gray-light);
+  }
+  .cp-item .cp-label .check {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    transition: all .15s;
+    flex-shrink: 0;
+    background: transparent;
+  }
+  .cp-item.done .cp-label .check {
+    background: var(--success);
+    border-color: var(--success);
+  }
+  .cp-item.done .cp-label .check::after { content: ''; width: 8px; height: 4px; border-left: 2px solid white; border-bottom: 2px solid white; transform: rotate(-45deg); margin-top: -2px; }
+  .cp-item .cp-pts {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 6px;
+  }
+  .cp-item .cp-pts.neg { color: var(--success); background: rgba(61,220,132,0.08); }
+  .cp-item .cp-pts.pos { color: var(--error); background: rgba(255,90,90,0.06); }
+
+  /* ── Total Row ── */
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin-top: 12px;
+    border: 1px solid rgba(200,224,0,0.08);
+  }
+  .total-row .tr-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: var(--gray-mid);
+  }
+  .total-row .tr-value {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--accent);
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  /* ── Buttons ── */
+  .footer-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .footer-actions button {
+    flex: 1;
+    height: 52px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .footer-actions .save-btn {
+    background: var(--accent);
+    color: #0D0F10;
+  }
+  .footer-actions .save-btn:active { transform: scale(0.97); background: #D4EA00; }
+
+  .clear-btn {
+    width: 100%;
+    height: 48px;
+    margin-top: 10px;
+    background: transparent;
+    color: var(--gray-mid);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .clear-btn:active { border-color: rgba(255,255,255,0.12); color: var(--error); }
+
+  /* ── Leaderboard ── */
+  .lb-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .lb-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    border: 1px solid var(--border);
+    transition: all .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .lb-card.lb-first {
+    border-color: rgba(200,224,0,0.12);
+    background: linear-gradient(135deg, #16191C 0%, #1a1d0f 100%);
+  }
+  .lb-card.lb-first::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+  .lb-card.lb-tie { border-left: 3px solid var(--accent); }
+
+  .lb-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .lb-rank {
+    font-size: 1.4rem;
+    font-weight: 900;
+    min-width: 32px;
+    text-align: center;
+    line-height: 1;
+    font-feature-settings: "tnum";
+  }
+  .lb-rank.gold { color: var(--accent); }
+  .lb-rank.silver { color: var(--gray-light); }
+  .lb-rank.bronze { color: #CD7F32; }
+  .lb-rank.normal { color: var(--gray-mid); }
+
+  .lb-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--white);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    line-height: 1;
+  }
+  .lb-card.lb-first .lb-avatar {
+    background: rgba(200,224,0,0.08);
+    border-color: rgba(200,224,0,0.2);
+    color: var(--accent);
+  }
+
+  .lb-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .lb-info .lb-team {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.2px;
+  }
+  .lb-info .lb-players {
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: var(--gray-mid);
+    margin-top: 1px;
+  }
+  .lb-info .lb-progress {
+    margin-top: 6px;
+    height: 4px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 10px;
+    overflow: hidden;
+    max-width: 120px;
+  }
+  .lb-info .lb-progress .lb-progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--accent), var(--secondary));
+    transition: width .5s ease;
+  }
+  .lb-card.lb-first .lb-progress .lb-progress-fill {
+    box-shadow: 0 0 8px var(--accent-glow);
+  }
+
+  .lb-score {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .lb-score .lb-score-value {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    font-feature-settings: "tnum";
+  }
+  .lb-score .lb-score-label {
+    font-size: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gray-mid);
+    margin-top: 1px;
+  }
+
+  .lb-holes {
+    display: flex;
+    gap: 3px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.03);
+  }
+  .lb-holes .lb-hole-dot {
+    width: 100%;
+    height: 4px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    transition: background .2s;
+  }
+  .lb-holes .lb-hole-dot.done {
+    background: rgba(200,224,0,0.3);
+  }
+  .lb-holes .lb-hole-dot.active {
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent-glow);
+  }
+
+  /* ── Empty state ── */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--gray-mid);
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px dashed rgba(255,255,255,0.04);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  .empty-state .icon { font-size: 2rem; margin-bottom: 10px; opacity: 0.4; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 88px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--card);
+    color: var(--accent);
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1px solid rgba(200,224,0,0.12);
+    font-family: var(--font);
+    font-weight: 600;
+    font-size: 0.75rem;
+    opacity: 0;
+    transition: opacity .25s ease, transform .25s ease;
+    pointer-events: none;
+    z-index: 999;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+
+  /* ── Reset ── */
+  .reset-btn {
+    width: 100%;
+    margin-top: 14px;
+    padding: 12px;
+    background: transparent;
+    color: var(--gray-mid);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .reset-btn:active { border-color: rgba(255,90,90,0.2); color: var(--error); }
+
+  /* ── Edit Teams button ── */
+  .edit-teams-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    color: var(--gray-mid);
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-family: var(--font);
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .edit-teams-btn:active { border-color: var(--accent); color: var(--accent); }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 500;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 16px;
+    transition: opacity .2s;
+  }
+  .modal-overlay.hidden { display: none; }
+  .modal-content {
+    width: 100%;
+    max-width: 430px;
+    background: var(--card);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    animation: slideUp .25s ease;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .modal-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--gray-mid);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 6px;
+  }
+  .modal-close:active { background: rgba(255,255,255,0.05); }
+  .modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .team-edit-row {
+    background: rgba(255,255,255,0.02);
+    border-radius: 12px;
+    padding: 14px;
+    border: 1px solid var(--border);
+  }
+  .team-edit-row .ter-header {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gray-mid);
+    margin-bottom: 8px;
+  }
+  .team-edit-row input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    color: var(--white);
+    font-family: var(--font);
+    font-size: 0.85rem;
+    font-weight: 500;
+    outline: none;
+    transition: border .15s;
+  }
+  .team-edit-row input:focus { border-color: var(--accent); }
+  .team-edit-row input + input { margin-top: 8px; }
+  .team-edit-row input::placeholder { color: var(--gray-mid); font-weight: 400; }
+
+  /* ── Login Overlay ── */
+  .login-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    transition: opacity .4s ease;
+  }
+  .login-overlay.hidden { opacity: 0; pointer-events: none; }
+  .login-box {
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+  }
+  .login-box .lb-logo {
+    width: 56px;
+    height: 56px;
+    background: var(--accent);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+  }
+  .login-box .lb-logo span {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #0D0F10;
+  }
+  .login-box h2 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.3px;
+  }
+  .login-box p {
+    font-size: 0.8rem;
+    color: var(--gray-mid);
+    margin-top: 6px;
+  }
+  .login-box .lb-input {
+    width: 100%;
+    margin-top: 24px;
+    padding: 16px 18px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    background: var(--card);
+    color: var(--white);
+    font-family: var(--font);
+    font-size: 1rem;
+    font-weight: 600;
+    outline: none;
+    transition: border .2s;
+    text-align: center;
+  }
+  .login-box .lb-input:focus { border-color: var(--accent); }
+  .login-box .lb-input::placeholder { color: var(--gray-mid); font-weight: 500; }
+  .login-box .lb-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    background: var(--accent);
+    color: #0D0F10;
+    font-family: var(--font);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .login-box .lb-btn:active { opacity: 0.8; }
+  .login-box .lb-error {
+    font-size: 0.75rem;
+    color: var(--error);
+    margin-top: 10px;
+    min-height: 20px;
+  }
+  .login-box .lb-hint {
+    font-size: 0.6rem;
+    color: var(--gray-mid);
+    margin-top: 16px;
+    opacity: 0.4;
+  }
+  .login-box .lb-lock {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.65rem;
+    color: var(--gray-mid);
+    margin-top: 20px;
+    opacity: 0.3;
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.04); border-radius: 10px; }
+
+  /* ── Lucide icon sizing ── */
+  i { display: inline-flex; }
+</style>
+</head>
+<body>
+
+<!-- Login Overlay -->
+<div class="login-overlay hidden" id="loginOverlay">
+  <div class="login-box">
+    <div class="lb-logo"><span>H</span></div>
+    <h2>Score invoeren</h2>
+    <p>Voer het wachtwoord in om scores te beheren</p>
+    <input class="lb-input" type="password" id="pwInput" placeholder="Wachtwoord" autocomplete="off" onkeydown="if(event.key==='Enter')login()">
+    <button class="lb-btn" onclick="login()">Ontgrendel</button>
+    <div class="lb-error" id="pwError"></div>
+    <div class="lb-lock"><i data-lucide="lock" style="width:12px;height:12px;"></i> Alleen voor organisatie</div>
+  </div>
+</div>
+
+<div class="app-wrap">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-logo"><span>H</span></div>
+      <div class="header-text">
+        <div class="ht-title"><span class="ht-accent">PUB</span>GOLF</div>
+        <div class="ht-sub">De Haagse Hogeschool</div>
+      </div>
+    </div>
+    <div class="header-status">
+      <div class="hs-label">Golfers</div>
+      <div class="hs-value">14</div>
+    </div>
+  </div>
+  <div class="header-divider"></div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- LEADERBOARD -->
+    <div id="view-leaderboard" class="view active">
+      <div class="view-title">&#9679; Live Stand</div>
+      <div class="lb-list" id="lb-list"></div>
+      <div class="empty-state" id="lb-empty">
+        <div class="icon">&#9740;</div>
+        Nog geen scores ingevoerd
+      </div>
+    </div>
+
+    <!-- SCORE -->
+    <div id="view-score" class="view">
+      <div id="score-teams" class="view-sub active">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div class="view-title" style="margin:0;">&#9679; Selecteer team</div>
+          <button class="edit-teams-btn" onclick="openTeamEditor()">
+            <i data-lucide="users" style="width:16px;height:16px;"></i> Teams
+          </button>
+        </div>
+        <div class="team-grid" id="team-grid"></div>
+        <button class="reset-btn" onclick="resetAll()">
+          <i data-lucide="refresh-cw"></i> Reset alle scores
+        </button>
+      </div>
+      <div id="score-holes" class="view-sub">
+        <button class="back-btn" onclick="showTeams()">
+          <i data-lucide="chevron-left"></i> Teams
+        </button>
+        <div class="score-header" id="score-header">
+          <div class="sh-left">
+            <div class="sh-avatar" id="sh-avatar">1</div>
+            <div class="sh-info">
+              <div class="sh-name" id="sh-name"></div>
+              <div class="sh-players" id="sh-players"></div>
+            </div>
+          </div>
+          <div class="sh-total">
+            <div class="sh-total-label">Totaal</div>
+            <div class="sh-total-value" id="sh-total">-</div>
+          </div>
+        </div>
+        <div class="hole-list" id="hole-list"></div>
+        <div class="footer-actions">
+          <button class="save-btn" onclick="saveCurrentScores()">
+            <i data-lucide="check"></i> Opslaan
+          </button>
+        </div>
+        <button class="clear-btn" onclick="clearCurrentScores()">
+          <i data-lucide="trash-2"></i> Alles wissen
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Team Editor Modal -->
+<div class="modal-overlay hidden" id="teamEditor">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Teams bewerken</h3>
+      <button class="modal-close" onclick="closeTeamEditor()"><i data-lucide="x" style="width:18px;height:18px;"></i></button>
+    </div>
+    <div class="modal-body" id="teamEditorList"></div>
+    <button class="save-btn" onclick="saveTeamEditor()" style="width:100%;height:52px;border:none;border-radius:14px;background:var(--accent);color:#0D0F10;font-family:var(--font);font-size:0.85rem;font-weight:700;cursor:pointer;margin-top:4px;">
+      <i data-lucide="check"></i> Opslaan
+    </button>
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <button class="nav-btn active" data-view="leaderboard" onclick="switchView('leaderboard')">
+    <i data-lucide="trophy"></i> Stand
+  </button>
+  <button class="nav-btn" data-view="score" onclick="switchView('score')">
+    <i data-lucide="edit-3"></i> Score
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script>
+// ========== DATA ==========
+const DEFAULT_TEAMS = [
+  { id: 1, name: "Team 1", players: "Joep & Aaron" },
+  { id: 2, name: "Team 2", players: "Reinder & Jutter" },
+  { id: 3, name: "Team 3", players: "Finn & Stijn" },
+  { id: 4, name: "Team 4", players: "Sem & Max" },
+  { id: 5, name: "Team 5", players: "Tim & Justin" },
+  { id: 6, name: "Team 6", players: "Dean & Rens" },
+  { id: 7, name: "Team 7", players: "Bram & Mendel" },
+];
+let customTeams = null;
+
+function getTeams() {
+  if (customTeams) return customTeams;
+  return DEFAULT_TEAMS;
+}
+
+function getTeam(id) {
+  return getTeams().find(t => t.id === id);
+}
+
+const PUBS = [
+  "O'Casey's Irish Pub & Restaurant",
+  "The Fiddler",
+  "Huppel The Pub",
+  "Sixpence Public House",
+  "Ned Kelly's Irish Pub",
+  "Bierspeciaal Café De Paas",
+  "Rootz",
+  "Café Momfer de Mol",
+  "Café de Landman",
+  "Gekke Geit",
+  "Bleyenberg",
+  "Pavlov",
+  "Hoppzak",
+  "Café September",
+  "De Zwarte Ruiter",
+  "Kompaan Binnenhaven (finish)",
+];
+
+const CHALLENGES = [
+  { id: 'huisfavoriet', name: 'Huisfavoriet', description: 'Vraag aan de bar wat hier het huisdrankje is. Bestel het als team en noteer de naam.', scoring: 'Elke slok is een slag', difficulty: 'NORMAAL', items: [
+    { type: 'bonus', label: 'Prijs exact geraden vooraf', points: -1 },
+    { type: 'penalty', label: 'Naam van het drankje vergeten', points: 1 },
+  ]},
+  { id: 'wat-kost-de-schade', name: 'Wat kost de schade', description: "Raad vóór het bestellen wat jullie hele ronde gaat kosten. Schrijf het op vóór de bar het zegt.", scoring: 'Eén gok per team', difficulty: 'NORMAAL', items: [
+    { type: 'bonus', label: 'Dichtstbijzijnde team', points: -1 },
+    { type: 'bonus', label: 'Exact geraden', points: -2 },
+    { type: 'penalty', label: 'Verste ernaast', points: 1 },
+  ]},
+  { id: 'verkoop-dat-glas', name: 'Verkoop dat glas', description: 'Geef jullie drankje een veel te serieuze verkooppitch van maximaal 20 seconden. Andere teams jureren.', scoring: 'Beste pitch wint', difficulty: 'NORMAAL', items: [
+    { type: 'bonus', label: 'Beste pitch (meeste stemmen)', points: -1 },
+    { type: 'penalty', label: 'Lafste (geen poging)', points: 1 },
+  ]},
+  { id: 'geen-veilige-keuze', name: 'Geen veilige keuze', description: 'Kies het drankje met de meest overdreven naam op de kaart. Iets dat je normaal nooit zou nemen.', scoring: 'Standaard scoring', difficulty: 'FANATIEK', items: [
+    { type: 'bonus', label: 'Ander team noemt jullie keuze de gekste', points: -1 },
+    { type: 'penalty', label: 'Stiekem toch een veilige keuze', points: 2 },
+  ]},
+  { id: 'alles-of-niks', name: 'Alles of niks', description: 'Roep de hole-in-one vóór je begint: het hele drankje in één teug, geen pauzes.', scoring: 'Elke slok is een slag', difficulty: 'FANATIEK', items: [
+    { type: 'bonus', label: 'Hole-in-one gelukt (in één teug)', points: -1 },
+    { type: 'penalty', label: 'Aangekondigd maar afgebroken', points: 1 },
+  ]},
+  { id: 'caddie-offer', name: 'Caddie-offer', description: 'Wijs één teamlid aan als caddie voor deze hole. Die persoon houdt score bij en mag één strafslag van het team verplaatsen naar een ander teamlid.', scoring: 'Standaard scoring per hole', difficulty: 'CHAOS', items: [
+    { type: 'penalty', label: 'Caddie maakt rekenfout', points: 1 },
+  ]},
+  { id: 'sabotageronde', name: 'Sabotageronde', description: 'Het team rechts van jullie kiest één drankje van de kaart dat jullie team moet bestellen. Geen extreme keuzes.', scoring: 'Elke slok is een slag', difficulty: 'FANATIEK', items: [
+    { type: 'penalty', label: 'Geweigerd', points: 2 },
+  ]},
+  { id: 'stille-hole', name: 'Stille hole', description: 'Communiceer onderling alleen via gebaren. Aan de bar gewoon vriendelijk praten.', scoring: 'Standaard scoring', difficulty: 'CHAOS', items: [
+    { type: 'bonus', label: 'Hele hole onderling stil geweest', points: -2 },
+    { type: 'penalty', label: 'Onderling gepraat (per overtreding)', points: 1 },
+  ]},
+];
+
+const PUB_CHALLENGE_IDS = [
+  'huisfavoriet', 'wat-kost-de-schade', 'verkoop-dat-glas', 'geen-veilige-keuze',
+  'alles-of-niks', 'caddie-offer', 'sabotageronde', 'stille-hole',
+  'wat-kost-de-schade', 'alles-of-niks', 'huisfavoriet', 'verkoop-dat-glas',
+  'caddie-offer', 'geen-veilige-keuze', 'stille-hole', 'sabotageronde',
+];
+
+// ========== STATE ==========
+let scores = {};
+let challengeToggles = {};
+let currentTeamId = null;
+let expandedPubId = null;
+let syncVersion = 0;
+let syncTimer = null;
+const API = '/api/data';
+
+// ========== STORAGE ==========
+async function loadData() {
+  try {
+    const r = await fetch(API);
+    const data = await r.json();
+    scores = data.scores || {};
+    challengeToggles = data.toggles || {};
+    syncVersion = data.version || 0;
+    if (data.teams && Array.isArray(data.teams) && data.teams.length > 0) {
+      customTeams = data.teams;
+    }
+  } catch {
+    // fallback to localStorage
+    try {
+      scores = JSON.parse(localStorage.getItem('pubgolf_scores')) || {};
+      challengeToggles = JSON.parse(localStorage.getItem('pubgolf_toggles')) || {};
+    } catch { scores = {}; challengeToggles = {}; }
+  }
+  renderTeams();
+  renderLeaderboard();
+}
+
+function saveData() {
+  const body = JSON.stringify({ scores, toggles: challengeToggles, teams: getTeams(), version: syncVersion + 1 });
+  syncVersion++;
+  fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }).catch(() => {});
+  // also keep localStorage as backup
+  try {
+    localStorage.setItem('pubgolf_scores', JSON.stringify(scores));
+    localStorage.setItem('pubgolf_toggles', JSON.stringify(challengeToggles));
+  } catch {}
+}
+
+function pollData() {
+  fetch(API).then(r => r.json()).then(data => {
+    if (data.version && data.version > syncVersion) {
+      scores = data.scores || {};
+      challengeToggles = data.toggles || {};
+      syncVersion = data.version || 0;
+      renderTeams();
+      renderLeaderboard();
+      if (currentTeamId) renderScoreList();
+    }
+  }).catch(() => {});
+}
+
+function startSync() {
+  loadData();
+  if (syncTimer) clearInterval(syncTimer);
+  syncTimer = setInterval(pollData, 3000);
+}
+// Also poll on visibility change (user comes back to tab)
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) pollData();
+});
+
+// ========== HELPERS ==========
+function getChallenge(pubId) {
+  const id = PUB_CHALLENGE_IDS[pubId];
+  return CHALLENGES.find(c => c.id === id);
+}
+
+function getChallengeAdjustment(teamId, pubId) {
+  const ch = getChallenge(pubId);
+  if (!ch) return 0;
+  const done = (challengeToggles[teamId] && challengeToggles[teamId][pubId]) || [];
+  let adj = 0;
+  done.forEach(idx => {
+    if (ch.items[idx]) adj += ch.items[idx].points;
+  });
+  return adj;
+}
+
+function getPubTotal(teamId, pubId) {
+  const base = (scores[teamId] && scores[teamId][pubId]);
+  const strokes = (base !== undefined && base !== '') ? parseInt(base) : 0;
+  if (isNaN(strokes)) return null;
+  return strokes + getChallengeAdjustment(teamId, pubId);
+}
+
+function getTeamTotal(teamId) {
+  let sum = 0, count = 0;
+  for (let i = 0; i < PUBS.length; i++) {
+    const t = getPubTotal(teamId, i);
+    if (t !== null) { sum += t; count++; }
+  }
+  return count > 0 ? sum : null;
+}
+
+function hasAnyScores(teamId) {
+  if (scores[teamId]) {
+    for (const v of Object.values(scores[teamId])) {
+      if (v !== '' && !isNaN(parseInt(v))) return true;
+    }
+  }
+  if (challengeToggles[teamId]) {
+    for (const arr of Object.values(challengeToggles[teamId])) {
+      if (arr && arr.length > 0) return true;
+    }
+  }
+  return false;
+}
+
+function getPubCount(teamId) {
+  if (!scores[teamId]) return 0;
+  return Object.values(scores[teamId]).filter(v => v !== '' && !isNaN(parseInt(v))).length;
+}
+
+// ========== RENDER ==========
+function renderTeams() {
+  const grid = document.getElementById('team-grid');
+  grid.innerHTML = getTeams().map(t => {
+    const total = getTeamTotal(t.id);
+    const has = hasAnyScores(t.id);
+    return `<div class="team-card${has ? ' has-scores' : ''}" onclick="openTeam(${t.id})">
+      <div class="team-card-left">
+        <div class="team-avatar">${t.id}</div>
+        <div class="team-card-info">
+          <div class="tc-name">${t.players}</div>
+          <div class="tc-players">${t.name}</div>
+        </div>
+      </div>
+      <div class="team-card-right">
+        ${total !== null ? `<div class="tc-score">${total}</div><div class="tc-label">slagen</div>` : '<div style="font-size:0.7rem;color:var(--gray-mid);font-weight:600;">—</div>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openTeam(teamId) {
+  currentTeamId = teamId;
+  expandedPubId = null;
+  const t = getTeam(teamId);
+  document.getElementById('sh-avatar').textContent = t.id;
+  document.getElementById('sh-name').textContent = t.players;
+  document.getElementById('sh-players').textContent = t.name;
+  if (!scores[teamId]) scores[teamId] = {};
+  if (!challengeToggles[teamId]) challengeToggles[teamId] = {};
+  renderScoreList();
+  document.getElementById('score-teams').classList.remove('active');
+  document.getElementById('score-holes').classList.add('active');
+}
+
+function renderScoreList() {
+  const list = document.getElementById('hole-list');
+  const teamId = currentTeamId;
+  let html = '';
+
+  PUBS.forEach((pub, i) => {
+    const val = (scores[teamId] && scores[teamId][i]) || '';
+    const adj = getChallengeAdjustment(teamId, i);
+    const adjClass = adj < 0 ? 'neg' : adj > 0 ? 'pos' : 'zero';
+    const adjDisplay = adj !== 0 ? (adj > 0 ? '+' : '') + adj : '';
+    const filled = val !== '';
+    const isExpanded = expandedPubId === i;
+    const ch = getChallenge(i);
+
+    html += `<div class="hole-card${isExpanded ? ' hole-expanded' : ''}">`;
+    html += `<div class="hole-main">`;
+    html += `<div class="hole-nr">${String(i + 1).padStart(2, '0')}</div>`;
+    html += `<div class="hole-info">
+      <div class="hole-pub" onclick="toggleChallenge(${i})">${pub}</div>`;
+    if (ch) {
+      html += `<div class="hole-meta">
+        <span class="hole-challenge">${ch.name}</span>
+        <span class="hole-diff ${ch.difficulty.toLowerCase()}">${ch.difficulty}</span>
+      </div>`;
+    }
+    html += `</div>`;
+    html += `<div class="hole-score">
+      <input type="number" min="1" max="30" inputmode="numeric" placeholder="-" value="${val}"
+        oninput="onScoreInput(${teamId}, ${i}, this.value)">
+      <div class="adj-badge ${adjClass}">${adjDisplay || '0'}</div>
+    </div>`;
+    html += `</div>`;
+
+    // Challenge panel
+    html += `<div class="challenge-panel${isExpanded ? ' open' : ''}">`;
+    if (ch) {
+      const done = (challengeToggles[teamId] && challengeToggles[teamId][i]) || [];
+      html += `<div class="cp-name">${ch.name}</div>`;
+      html += `<div class="cp-desc">${ch.description}</div>`;
+      html += `<div class="cp-scoring"><strong>Score:</strong> ${ch.scoring}</div>`;
+
+      const bonuses = ch.items.filter(it => it.type === 'bonus');
+      const penalties = ch.items.filter(it => it.type === 'penalty');
+
+      if (bonuses.length > 0) {
+        html += `<div class="cp-section bonus">Bonussen</div>`;
+        bonuses.forEach((item) => {
+          const globalIdx = ch.items.indexOf(item);
+          const isDone = done.includes(globalIdx);
+          const ptsDisplay = item.points < 0 ? item.points : '+' + item.points;
+          html += `<div class="cp-item${isDone ? ' done' : ''}" onclick="toggleItem(${teamId}, ${i}, ${globalIdx})">
+            <span class="cp-label"><span class="check"></span>${item.label}</span>
+            <span class="cp-pts neg">${ptsDisplay}</span>
+          </div>`;
+        });
+      }
+
+      if (penalties.length > 0) {
+        html += `<div class="cp-section penalty">Strafslagen</div>`;
+        penalties.forEach((item) => {
+          const globalIdx = ch.items.indexOf(item);
+          const isDone = done.includes(globalIdx);
+          const ptsDisplay = item.points > 0 ? '+' + item.points : item.points;
+          html += `<div class="cp-item${isDone ? ' done' : ''}" onclick="toggleItem(${teamId}, ${i}, ${globalIdx})">
+            <span class="cp-label"><span class="check"></span>${item.label}</span>
+            <span class="cp-pts pos">${ptsDisplay}</span>
+          </div>`;
+        });
+      }
+    }
+    html += `</div>`;
+    html += `</div>`;
+  });
+
+  const total = getTeamTotal(teamId);
+  document.getElementById('sh-total').textContent = total !== null ? total : '-';
+  html += `<div class="total-row">
+    <span class="tr-label">Eindtotaal</span>
+    <span class="tr-value">${total !== null ? total : '—'}</span>
+  </div>`;
+
+  list.innerHTML = html;
+  lucide.createIcons();
+}
+
+// ========== INTERACTIONS ==========
+function toggleChallenge(pubId) {
+  expandedPubId = expandedPubId === pubId ? null : pubId;
+  renderScoreList();
+}
+
+function toggleItem(teamId, pubId, itemIdx) {
+  if (!challengeToggles[teamId]) challengeToggles[teamId] = {};
+  if (!challengeToggles[teamId][pubId]) challengeToggles[teamId][pubId] = [];
+  const arr = challengeToggles[teamId][pubId];
+  const idx = arr.indexOf(itemIdx);
+  if (idx === -1) arr.push(itemIdx);
+  else arr.splice(idx, 1);
+  saveData();
+  renderScoreList();
+  renderLeaderboard();
+  renderTeams();
+}
+
+function onScoreInput(teamId, pubId, val) {
+  if (!scores[teamId]) scores[teamId] = {};
+  scores[teamId][pubId] = val;
+  saveData();
+  renderScoreList();
+  renderLeaderboard();
+  renderTeams();
+}
+
+function saveCurrentScores() {
+  saveData();
+  showToast('Opgeslagen');
+}
+
+function clearCurrentScores() {
+  if (!currentTeamId) return;
+  if (!confirm('Weet je zeker dat je alle scores voor dit team wilt wissen?')) return;
+  scores[currentTeamId] = {};
+  challengeToggles[currentTeamId] = {};
+  saveData();
+  renderScoreList();
+  renderLeaderboard();
+  renderTeams();
+}
+
+function showTeams() {
+  currentTeamId = null;
+  expandedPubId = null;
+  document.getElementById('score-holes').classList.remove('active');
+  document.getElementById('score-teams').classList.add('active');
+  renderTeams();
+}
+
+// ========== TEAM EDITOR ==========
+function openTeamEditor() {
+  const list = document.getElementById('teamEditorList');
+  list.innerHTML = getTeams().map(t => `
+    <div class="team-edit-row">
+      <div class="ter-header">${t.name}</div>
+      <input type="text" id="te-name-${t.id}" value="${t.name}" placeholder="Teamnaam">
+      <input type="text" id="te-players-${t.id}" value="${t.players}" placeholder="Spelers">
+    </div>
+  `).join('');
+  document.getElementById('teamEditor').classList.remove('hidden');
+  lucide.createIcons();
+}
+
+function closeTeamEditor() {
+  document.getElementById('teamEditor').classList.add('hidden');
+}
+
+function saveTeamEditor() {
+  const teams = getTeams().map(t => ({
+    id: t.id,
+    name: document.getElementById(`te-name-${t.id}`).value.trim() || t.name,
+    players: document.getElementById(`te-players-${t.id}`).value.trim() || t.players,
+  }));
+  customTeams = teams;
+  closeTeamEditor();
+  saveData();
+  renderTeams();
+  renderLeaderboard();
+  showToast('Teams opgeslagen');
+}
+
+// ========== LEADERBOARD ==========
+function renderLeaderboard() {
+  const container = document.getElementById('lb-list');
+  const empty = document.getElementById('lb-empty');
+
+  const ranked = getTeams()
+    .map(t => ({ ...t, total: getTeamTotal(t.id) }))
+    .filter(t => t.total !== null)
+    .sort((a, b) => a.total - b.total);
+
+  if (ranked.length === 0) {
+    container.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  let currentRank = 1;
+  let prevTotal = null;
+  const maxRank = ranked.length;
+
+  container.innerHTML = ranked.map((t, i) => {
+    const isTie = prevTotal !== null && t.total === prevTotal;
+    if (!isTie) currentRank = i + 1;
+    prevTotal = t.total;
+
+    let rankClass = 'normal';
+    if (currentRank === 1) rankClass = 'gold';
+    else if (currentRank === 2) rankClass = 'silver';
+    else if (currentRank === 3) rankClass = 'bronze';
+
+    const progressPct = Math.max(20, Math.round((1 - (currentRank - 1) / maxRank) * 85));
+
+    // Hole completion dots
+    const completed = getPubCount(t.id);
+    let dots = '';
+    for (let h = 0; h < PUBS.length; h++) {
+      if (h < completed) dots += '<div class="lb-hole-dot done"></div>';
+      else if (h === completed) dots += '<div class="lb-hole-dot active"></div>';
+      else dots += '<div class="lb-hole-dot"></div>';
+    }
+
+    return `<div class="lb-card${currentRank === 1 ? ' lb-first' : ''}${isTie ? ' lb-tie' : ''}">
+      <div class="lb-main">
+        <div class="lb-rank ${rankClass}">${currentRank}</div>
+        <div class="lb-avatar">${t.id}</div>
+        <div class="lb-info">
+          <div class="lb-team">${t.name}</div>
+          <div class="lb-players">${t.players}</div>
+          <div class="lb-progress">
+            <div class="lb-progress-fill" style="width:${progressPct}%"></div>
+          </div>
+        </div>
+        <div class="lb-score">
+          <div class="lb-score-value">${t.total}</div>
+          <div class="lb-score-label">slagen</div>
+        </div>
+      </div>
+      <div class="lb-holes">${dots}</div>
+    </div>`;
+  }).join('');
+}
+
+// ========== AUTH ==========
+function isLoggedIn() {
+  try { return sessionStorage.getItem('pubgolf_auth') === '1'; } catch { return false; }
+}
+
+async function login() {
+  const pw = document.getElementById('pwInput').value;
+  const error = document.getElementById('pwError');
+  if (!pw) { error.textContent = 'Voer een wachtwoord in'; return; }
+  try {
+    const r = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw }),
+    });
+    const data = await r.json();
+    if (data.ok) {
+      try { sessionStorage.setItem('pubgolf_auth', '1'); } catch {}
+      document.getElementById('loginOverlay').classList.add('hidden');
+      switchView('score');
+    } else {
+      error.textContent = 'Verkeerd wachtwoord';
+      document.getElementById('pwInput').value = '';
+      document.getElementById('pwInput').focus();
+    }
+  } catch {
+    error.textContent = 'Kan geen verbinding maken met server';
+  }
+}
+
+// ========== NAVIGATION ==========
+function switchView(view) {
+  if (view === 'score') {
+    if (!isLoggedIn()) {
+      document.getElementById('loginOverlay').classList.remove('hidden');
+      document.getElementById('pwInput').value = '';
+      document.getElementById('pwError').textContent = '';
+      document.getElementById('pwInput').focus();
+      return;
+    }
+  }
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  document.querySelector('.nav-btn[data-view="' + view + '"]').classList.add('active');
+  if (view === 'leaderboard') renderLeaderboard();
+  if (view === 'score') renderTeams();
+  lucide.createIcons();
+}
+
+// ========== MISC ==========
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function resetAll() {
+  if (!confirm('Weet je zeker dat je ALLES wilt resetten?')) return;
+  scores = {};
+  challengeToggles = {};
+  syncVersion++;
+  saveData();
+  renderTeams();
+  renderLeaderboard();
+  if (currentTeamId) showTeams();
+  showToast('Alles gewist');
+}
+
+// ========== INIT ==========
+startSync();
+lucide.createIcons();
+</script>
+</body>
+</html>
