@@ -1292,6 +1292,9 @@ function pollData() {
     if (data.version && data.version > syncVersion) {
       scores = data.scores || {};
       challengeToggles = data.toggles || {};
+      if (data.teams && Array.isArray(data.teams) && data.teams.length > 0) {
+        customTeams = data.teams;
+      }
       syncVersion = data.version || 0;
       renderTeams();
       renderLeaderboard();

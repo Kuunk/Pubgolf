@@ -28,7 +28,7 @@ app.get('/api/data', (req, res) => {
     const raw = fs.readFileSync(DATA_FILE, 'utf-8');
     res.json(JSON.parse(raw));
   } catch {
-    res.json({ scores: {}, toggles: {}, version: 0 });
+    res.json({ scores: {}, toggles: {}, teams: [], version: 0 });
   }
 });
 
@@ -41,6 +41,7 @@ app.post('/api/data', (req, res) => {
   const toStore = {
     scores: data.scores || {},
     toggles: data.toggles || {},
+    teams: data.teams || [],
     version: data.version || 0,
     updatedAt: new Date().toISOString(),
   };
