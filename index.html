@@ -3,273 +3,277 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PubGolf Scoreboard</title>
+<title>HHS PubGolf — Scoreboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0B1E3C;
-    --card: #E2E8F2;
-    --card-hover: #edf2f9;
-    --accent: #C6FF00;
-    --accent-glow: rgba(198,255,0,0.25);
-    --blue: #2A6BFF;
-    --blue-glow: rgba(42,107,255,0.2);
-    --text-primary: #FFFFFF;
-    --text-secondary: #D5E1F2;
-    --text-dark: #0B1E3C;
-    --text-muted: #6B7F9E;
-    --border: rgba(255,255,255,0.08);
-    --danger: #FF3B5C;
-    --success: #00E676;
-    --radius: 24px;
-    --radius-sm: 16px;
-    --radius-xs: 12px;
-    --shadow: 0 8px 32px rgba(0,0,0,0.3);
-    --shadow-card: 0 4px 20px rgba(0,0,0,0.15);
+    --bg: #0D0F10;
+    --card: #16191C;
+    --accent: #C8E000;
+    --accent-glow: rgba(200,224,0,0.15);
+    --secondary: #A3BD00;
+    --white: #FFFFFF;
+    --gray-light: #D8D8D8;
+    --gray-mid: #8E9398;
+    --success: #3DDC84;
+    --error: #FF5A5A;
+    --border: rgba(255,255,255,0.06);
+    --radius: 20px;
+    --radius-sm: 14px;
+    --radius-xs: 10px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+    font-family: var(--font);
     background: var(--bg);
-    color: var(--text-primary);
+    color: var(--white);
     min-height: 100vh;
     padding: 0;
-    padding-bottom: 100px;
+    padding-bottom: 96px;
     -webkit-tap-highlight-color: transparent;
-    position: relative;
-    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Circuit background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      /* Corner circuit nodes */
-      radial-gradient(circle at 5% 5%, rgba(198,255,0,0.04) 0%, transparent 40%),
-      radial-gradient(circle at 95% 10%, rgba(42,107,255,0.05) 0%, transparent 40%),
-      radial-gradient(circle at 10% 90%, rgba(42,107,255,0.04) 0%, transparent 40%),
-      radial-gradient(circle at 90% 85%, rgba(198,255,0,0.04) 0%, transparent 40%),
-      /* Center glow */
-      radial-gradient(ellipse at 50% 40%, rgba(42,107,255,0.06) 0%, transparent 60%),
-      /* Circuit grid */
-      repeating-linear-gradient(0deg, transparent, transparent 58px, rgba(198,255,0,0.015) 58px, rgba(198,255,0,0.015) 60px),
-      repeating-linear-gradient(90deg, transparent, transparent 58px, rgba(198,255,0,0.015) 58px, rgba(198,255,0,0.015) 60px);
-    pointer-events: none;
-    z-index: 0;
-  }
-  /* Circuit dots */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      radial-gradient(circle at 15% 20%, rgba(198,255,0,0.06) 1px, transparent 1px),
-      radial-gradient(circle at 50% 8%, rgba(42,107,255,0.06) 1px, transparent 1px),
-      radial-gradient(circle at 85% 25%, rgba(198,255,0,0.04) 1px, transparent 1px),
-      radial-gradient(circle at 10% 60%, rgba(42,107,255,0.05) 1px, transparent 1px),
-      radial-gradient(circle at 70% 70%, rgba(198,255,0,0.04) 1px, transparent 1px),
-      radial-gradient(circle at 90% 45%, rgba(42,107,255,0.04) 1px, transparent 1px),
-      radial-gradient(circle at 30% 85%, rgba(198,255,0,0.04) 1px, transparent 1px),
-      radial-gradient(circle at 60% 15%, rgba(42,107,255,0.05) 1px, transparent 1px);
-    background-size: 180px 180px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .app {
-    max-width: 420px;
+  .app-wrap {
+    max-width: 430px;
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     position: relative;
-    z-index: 1;
-    padding: 0 8px;
   }
 
   /* ── Header ── */
   .header {
-    text-align: center;
-    padding: 24px 16px 16px;
-    position: relative;
+    padding: 20px 20px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
-  .header h1 {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.8rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    background: linear-gradient(135deg, var(--accent) 0%, #8FFF00 40%, var(--blue) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-logo {
+    width: 40px;
+    height: 40px;
+    background: var(--accent);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .header-logo span {
+    font-family: var(--font);
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #0D0F10;
+    letter-spacing: 0;
+  }
+  .header-text .ht-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--white);
+    letter-spacing: -0.3px;
     line-height: 1.2;
-    text-shadow: none;
-    position: relative;
   }
-  .header h1::after {
-    content: '';
-    display: block;
-    width: 60px;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent), transparent);
-    margin: 8px auto 0;
-    border-radius: 2px;
-  }
-  .header p {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.85rem;
+  .header-text .ht-title .ht-accent { color: var(--accent); }
+  .header-text .ht-sub {
+    font-size: 0.65rem;
     font-weight: 600;
-    color: var(--text-secondary);
-    letter-spacing: 4px;
+    color: var(--gray-mid);
+    letter-spacing: 0.5px;
     text-transform: uppercase;
-    margin-top: 6px;
-    opacity: 0.7;
+    margin-top: 1px;
+  }
+  .header-status {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+  .header-status .hs-label {
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gray-mid);
+  }
+  .header-status .hs-value {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .header-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 20px 0;
+  }
+
+  /* ── Views ── */
+  .view { display: none; }
+  .view.active { display: flex; flex-direction: column; flex: 1; }
+  .view-sub { display: none; }
+  .view-sub.active { display: block; animation: fadeUp .3s ease; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  .content {
+    flex: 1;
+    padding: 16px 20px;
+  }
+
+  .view-title {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gray-mid);
+    margin-bottom: 14px;
   }
 
   /* ── Bottom Nav ── */
-  .nav-bar {
+  .bottom-nav {
     position: fixed;
     bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 100;
     display: flex;
-    gap: 4px;
-    background: rgba(11,30,60,0.92);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 20px;
-    padding: 6px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-    max-width: 420px;
-    width: calc(100% - 32px);
+    gap: 2px;
+    background: rgba(22,25,28,0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 4px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    max-width: 430px;
+    width: calc(100% - 40px);
   }
   .nav-btn {
     flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 12px 16px;
+    gap: 3px;
+    padding: 10px 12px 8px;
     border: none;
     border-radius: 14px;
-    font-family: 'Orbitron', monospace;
-    font-size: 0.7rem;
+    font-family: var(--font);
+    font-size: 0.5rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     cursor: pointer;
-    transition: all .25s ease;
+    transition: all .2s ease;
     background: transparent;
-    color: rgba(255,255,255,0.5);
+    color: var(--gray-mid);
+  }
+  .nav-btn i {
+    width: 22px;
+    height: 22px;
+    transition: all .2s;
   }
   .nav-btn.active {
-    background: var(--accent);
-    color: var(--bg);
-    box-shadow: 0 0 20px var(--accent-glow);
+    background: rgba(200,224,0,0.1);
+    color: var(--accent);
   }
-  .nav-btn:not(.active):active {
-    color: rgba(255,255,255,0.8);
-  }
-  .nav-btn i { pointer-events: none; }
+  .nav-btn.active i { color: var(--accent); }
+  .nav-btn:not(.active):active { color: var(--gray-light); }
 
-  .view { display: none; }
-  .view.active { display: block; animation: fadeIn .3s ease; }
-  .view-sub { display: none; }
-  .view-sub.active { display: block; animation: fadeIn .25s ease; }
-
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-
-  .page-content { padding: 8px 8px 16px; }
-
-  .view-label {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    color: var(--text-secondary);
-    margin-bottom: 16px;
-    opacity: 0.6;
-    text-align: center;
-    padding: 0 4px;
-  }
-
-  /* ── Teams ── */
+  /* ── Teams Grid ── */
   .team-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
   @media (min-width: 500px) {
-    .team-grid { grid-template-columns: 1fr 1fr 1fr; }
+    .team-grid { grid-template-columns: 1fr 1fr; }
   }
   .team-card {
     background: var(--card);
     border-radius: var(--radius);
-    padding: 20px 16px;
+    padding: 18px 20px;
     cursor: pointer;
     transition: all .2s ease;
-    border: 2px solid transparent;
-    text-align: center;
-    box-shadow: var(--shadow-card);
-    position: relative;
-    overflow: hidden;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
   }
-  .team-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--blue), transparent);
-    opacity: 0;
-    transition: opacity .2s;
+  .team-card:active { transform: scale(0.98); }
+  .team-card.has-scores { border-color: rgba(200,224,0,0.15); }
+  .team-card-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    flex: 1;
   }
-  .team-card.has-scores::before { opacity: 1; }
-  .team-card:active { transform: scale(0.96); }
-  .team-card.has-scores { border-color: rgba(198,255,0,0.3); }
-  .team-card .team-nr {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.55rem;
-    font-weight: 700;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    margin-bottom: 4px;
-  }
-  .team-card .team-name {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.2rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-dark);
-  }
-  .team-card .team-players {
+  .team-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
     font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-top: 4px;
+    font-weight: 800;
+    color: var(--gray-light);
   }
-  .team-card .total-badge {
-    display: inline-block;
-    margin-top: 10px;
-    background: var(--bg);
+  .team-card.has-scores .team-avatar {
+    border-color: rgba(200,224,0,0.2);
     color: var(--accent);
-    padding: 4px 16px;
-    font-family: 'Orbitron', monospace;
-    font-size: 0.85rem;
+  }
+  .team-card-info {
+    min-width: 0;
+  }
+  .team-card-info .tc-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.2px;
+  }
+  .team-card-info .tc-players {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gray-mid);
+    margin-top: 1px;
+  }
+  .team-card-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .team-card-right .tc-score {
+    font-size: 1.3rem;
     font-weight: 800;
-    border-radius: 30px;
-    letter-spacing: 2px;
-    box-shadow: 0 0 12px rgba(198,255,0,0.15);
+    color: var(--accent);
+    line-height: 1;
+  }
+  .team-card-right .tc-label {
+    font-size: 0.5rem;
+    font-weight: 600;
+    color: var(--gray-mid);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
   }
 
   /* ── Back button ── */
@@ -277,300 +281,293 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: rgba(255,255,255,0.06);
-    color: var(--text-secondary);
-    border: 1px solid var(--border);
-    padding: 10px 18px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.9rem;
+    background: transparent;
+    color: var(--gray-light);
+    border: none;
+    padding: 6px 0;
+    font-family: var(--font);
+    font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
     margin-bottom: 12px;
-    border-radius: var(--radius-sm);
-    transition: all .2s;
+    transition: opacity .15s;
   }
-  .back-btn:active { background: rgba(255,255,255,0.1); }
+  .back-btn:active { opacity: 0.6; }
+  .back-btn i { width: 18px; height: 18px; }
 
-  /* ── Admin header ── */
-  .admin-header {
+  /* ── Score Header (team info in scoring mode) ── */
+  .score-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
-    background: rgba(255,255,255,0.05);
-    padding: 14px 18px;
+    background: var(--card);
     border-radius: var(--radius);
+    padding: 16px 20px;
     border: 1px solid var(--border);
+    margin-bottom: 16px;
   }
-  .admin-header h2 {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.1rem;
+  .score-header .sh-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .score-header .sh-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(200,224,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.8rem;
     font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 2px;
     color: var(--accent);
   }
-  .admin-header .team-subtitle {
-    font-size: 0.8rem;
+  .score-header .sh-info .sh-name {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+  .score-header .sh-info .sh-players {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--gray-mid);
+    margin-top: 1px;
+  }
+  .score-header .sh-total {
+    text-align: right;
+  }
+  .score-header .sh-total .sh-total-label {
+    font-size: 0.5rem;
     font-weight: 600;
-    color: var(--text-secondary);
-    margin-top: 2px;
-    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gray-mid);
+  }
+  .score-header .sh-total .sh-total-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
   }
 
   /* ── Hole Cards ── */
-  .score-list { display: flex; flex-direction: column; gap: 10px; }
+  .hole-list { display: flex; flex-direction: column; gap: 10px; }
 
   .hole-card {
     background: var(--card);
     border-radius: var(--radius);
-    padding: 18px 18px 14px;
-    box-shadow: var(--shadow-card);
-    border: 1px solid rgba(255,255,255,0.03);
-    position: relative;
+    border: 1px solid var(--border);
     overflow: hidden;
-    transition: all .25s ease;
+    transition: all .2s;
   }
-  .hole-card.hole-expanded { border-radius: var(--radius) var(--radius) 16px 16px; }
-
-  .hole-main {
+  .hole-card.hole-expanded {
+    border-color: rgba(200,224,0,0.08);
+  }
+  .hole-card .hole-main {
+    padding: 16px 18px;
     display: grid;
-    grid-template-columns: 44px 1fr 52px;
+    grid-template-columns: 38px 1fr 44px;
     gap: 10px;
-    align-items: start;
-  }
-  .hole-nr-wrap {
-    display: flex;
-    flex-direction: column;
     align-items: center;
-    padding-top: 2px;
   }
-  .hole-nr-wrap .hole-label {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.45rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--text-muted);
-  }
-  .hole-nr-wrap .hole-nr {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.6rem;
-    font-weight: 900;
-    color: var(--text-dark);
+  .hole-main .hole-nr {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--gray-mid);
+    text-align: center;
     line-height: 1;
-    margin-top: 1px;
   }
-
-  .hole-info .hole-pub {
-    font-family: 'Orbitron', monospace;
+  .hole-card.hole-expanded .hole-main .hole-nr { color: var(--accent); }
+  .hole-main .hole-info .hole-pub {
     font-size: 0.85rem;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--text-dark);
+    color: var(--white);
     cursor: pointer;
+    letter-spacing: -0.2px;
     transition: color .15s;
   }
-  .hole-info .hole-pub:active { color: var(--blue); }
-  .hole-info .hole-challenge {
+  .hole-main .hole-info .hole-pub:active { color: var(--accent); }
+  .hole-main .hole-info .hole-meta {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-top: 4px;
+    gap: 6px;
+    margin-top: 3px;
     flex-wrap: wrap;
   }
-  .hole-info .hole-challenge .ch-tag {
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 2px;
+  .hole-meta .hole-challenge {
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: var(--gray-mid);
+    background: rgba(255,255,255,0.04);
     padding: 2px 8px;
     border-radius: 4px;
-    text-transform: uppercase;
-    background: rgba(11,30,60,0.06);
-    color: var(--text-muted);
-    font-family: 'Orbitron', monospace;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
   }
-  .hole-info .hole-challenge .diff-tag {
-    font-size: 0.55rem;
+  .hole-meta .hole-diff {
+    font-size: 0.5rem;
     font-weight: 700;
-    letter-spacing: 2px;
-    padding: 2px 8px;
-    border-radius: 4px;
     text-transform: uppercase;
-    font-family: 'Orbitron', monospace;
+    letter-spacing: 1px;
+    padding: 2px 7px;
+    border-radius: 3px;
   }
-  .diff-tag.normaal { background: rgba(0,230,118,0.15); color: #00A855; }
-  .diff-tag.fanatiek { background: rgba(255,59,92,0.12); color: var(--danger); }
-  .diff-tag.chaos { background: rgba(198,255,0,0.12); color: #8DD000; }
-
-  .hole-score-wrap {
+  .hole-diff.normaal { background: rgba(61,220,132,0.12); color: var(--success); }
+  .hole-diff.fanatiek { background: rgba(255,90,90,0.1); color: var(--error); }
+  .hole-diff.chaos { background: rgba(200,224,0,0.08); color: var(--accent); }
+  .hole-main .hole-score {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
   }
-  .hole-score-wrap input {
+  .hole-main .hole-score input {
     width: 100%;
     padding: 8px 2px;
-    border: 2px solid rgba(11,30,60,0.12);
+    border: 2px solid rgba(255,255,255,0.08);
     border-radius: var(--radius-xs);
-    background: white;
-    color: var(--text-dark);
-    font-family: 'Orbitron', monospace;
-    font-size: 1.1rem;
+    background: rgba(255,255,255,0.03);
+    color: var(--white);
+    font-family: var(--font);
+    font-size: 1rem;
     font-weight: 800;
     text-align: center;
     outline: none;
     transition: all .2s;
     -moz-appearance: textfield;
   }
-  .hole-score-wrap input::-webkit-outer-spin-button,
-  .hole-score-wrap input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .hole-score-wrap input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-glow); }
-  .hole-score-wrap input::placeholder { color: #B0BEC5; font-weight: 600; }
-  .hole-score-wrap .adj-badge {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.65rem;
+  .hole-main .hole-score input::-webkit-outer-spin-button,
+  .hole-main .hole-score input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .hole-main .hole-score input:focus { border-color: var(--accent); }
+  .hole-main .hole-score input::placeholder { color: rgba(255,255,255,0.12); font-weight: 600; }
+  .hole-main .hole-score .adj-badge {
+    font-size: 0.6rem;
     font-weight: 700;
-    padding: 1px 8px;
-    border-radius: 20px;
-    text-align: center;
-    min-width: 28px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    line-height: 1.4;
   }
-  .hole-score-wrap .adj-badge.neg { color: white; background: var(--success); }
-  .hole-score-wrap .adj-badge.pos { color: white; background: var(--danger); }
-  .hole-score-wrap .adj-badge.zero { color: var(--text-muted); background: rgba(11,30,60,0.05); }
+  .hole-main .hole-score .adj-badge.neg { color: var(--success); background: rgba(61,220,132,0.1); }
+  .hole-main .hole-score .adj-badge.pos { color: var(--error); background: rgba(255,90,90,0.08); }
+  .hole-main .hole-score .adj-badge.zero { color: var(--gray-mid); background: rgba(255,255,255,0.03); }
 
-  /* Challenge panel inside hole card */
+  /* ── Challenge Panel ── */
   .challenge-panel {
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(11,30,60,0.08);
+    padding: 0 18px 16px;
     display: none;
-    animation: slideUp .25s ease;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    animation: fadeUp .25s ease;
   }
   .challenge-panel.open { display: block; }
-
-  .challenge-panel .ch-name {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.8rem;
+  .challenge-panel .cp-name {
+    font-size: 0.85rem;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-dark);
+    color: var(--white);
+    margin-top: 14px;
   }
-  .challenge-panel .ch-desc {
-    font-size: 0.8rem;
+  .challenge-panel .cp-desc {
+    font-size: 0.75rem;
     font-weight: 500;
-    color: var(--text-muted);
+    color: var(--gray-mid);
     margin-top: 4px;
     line-height: 1.5;
   }
-  .challenge-panel .ch-scoring {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    margin-top: 6px;
-    padding: 6px 10px;
-    background: rgba(11,30,60,0.04);
+  .challenge-panel .cp-scoring {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--gray-mid);
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: rgba(255,255,255,0.02);
     border-radius: 8px;
   }
-  .challenge-panel .ch-scoring strong { color: var(--text-dark); }
+  .challenge-panel .cp-scoring strong { color: var(--gray-light); font-weight: 600; }
 
-  .ch-section-title {
-    font-family: 'Orbitron', monospace;
+  .cp-section {
     font-size: 0.55rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    margin: 10px 0 4px;
+    letter-spacing: 1.5px;
+    margin: 12px 0 4px;
   }
-  .ch-section-title.bonus { color: #00A855; }
-  .ch-section-title.penalty { color: var(--danger); }
+  .cp-section.bonus { color: var(--success); }
+  .cp-section.penalty { color: var(--error); }
 
-  .ch-item {
+  .cp-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 8px 10px;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background .15s;
+    transition: background .1s;
     -webkit-user-select: none;
     user-select: none;
   }
-  .ch-item:active { background: rgba(11,30,60,0.04); }
-  .ch-item .ch-label {
-    font-size: 0.8rem;
+  .cp-item:active { background: rgba(255,255,255,0.02); }
+  .cp-item .cp-label {
+    font-size: 0.75rem;
     font-weight: 500;
     display: flex;
     align-items: center;
     gap: 10px;
-    color: var(--text-dark);
+    color: var(--gray-light);
   }
-  .ch-item .ch-label .check {
-    width: 22px; height: 22px;
-    border-radius: 6px;
-    border: 2px solid rgba(11,30,60,0.15);
+  .cp-item .cp-label .check {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border: 1.5px solid rgba(255,255,255,0.1);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.7rem;
+    font-size: 0.6rem;
     transition: all .15s;
     flex-shrink: 0;
-    background: white;
+    background: transparent;
   }
-  .ch-item.done .ch-label .check {
+  .cp-item.done .cp-label .check {
     background: var(--success);
     border-color: var(--success);
-    color: white;
   }
-  .ch-item.done .ch-label .check::after { content: 'L'; font-weight: 700; }
-  .ch-item .ch-pts {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.75rem;
+  .cp-item.done .cp-label .check::after { content: ''; width: 8px; height: 4px; border-left: 2px solid white; border-bottom: 2px solid white; transform: rotate(-45deg); margin-top: -2px; }
+  .cp-item .cp-pts {
+    font-size: 0.7rem;
     font-weight: 700;
     padding: 2px 10px;
-    border-radius: 20px;
+    border-radius: 6px;
   }
-  .ch-item .ch-pts.neg { color: white; background: var(--success); }
-  .ch-item .ch-pts.pos { color: white; background: var(--danger); }
+  .cp-item .cp-pts.neg { color: var(--success); background: rgba(61,220,132,0.08); }
+  .cp-item .cp-pts.pos { color: var(--error); background: rgba(255,90,90,0.06); }
 
   /* ── Total Row ── */
   .total-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(135deg, rgba(198,255,0,0.08) 0%, rgba(42,107,255,0.08) 100%);
+    background: var(--card);
     border-radius: var(--radius);
-    padding: 16px 22px;
+    padding: 18px 22px;
     margin-top: 12px;
-    border: 1px solid rgba(198,255,0,0.15);
-    position: relative;
-    overflow: hidden;
+    border: 1px solid rgba(200,224,0,0.08);
   }
-  .total-row::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--blue), var(--accent));
-  }
-  .total-row .label {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.7rem;
+  .total-row .tr-label {
+    font-size: 0.6rem;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 3px;
-    color: var(--text-secondary);
+    letter-spacing: 2.5px;
+    color: var(--gray-mid);
   }
-  .total-row .value {
-    font-family: 'Orbitron', monospace;
-    font-size: 2rem;
+  .total-row .tr-value {
+    font-size: 1.8rem;
     font-weight: 900;
     color: var(--accent);
-    text-shadow: 0 0 20px var(--accent-glow);
+    letter-spacing: -1px;
+    line-height: 1;
   }
 
   /* ── Buttons ── */
@@ -581,16 +578,15 @@
   }
   .footer-actions button {
     flex: 1;
-    padding: 14px;
+    height: 52px;
     border: none;
     border-radius: var(--radius-sm);
-    font-family: 'Orbitron', monospace;
-    font-size: 0.75rem;
+    font-family: var(--font);
+    font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    transition: all .2s;
+    letter-spacing: 0.5px;
+    transition: all .15s;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -598,86 +594,95 @@
   }
   .footer-actions .save-btn {
     background: var(--accent);
-    color: var(--bg);
-    box-shadow: 0 0 20px var(--accent-glow);
+    color: #0D0F10;
   }
-  .footer-actions .save-btn:active { transform: scale(0.97); }
+  .footer-actions .save-btn:active { transform: scale(0.97); background: #D4EA00; }
 
   .clear-btn {
     width: 100%;
-    padding: 12px;
+    height: 48px;
     margin-top: 10px;
-    background: rgba(255,59,92,0.08);
-    color: var(--danger);
-    border: 1px solid rgba(255,59,92,0.2);
+    background: transparent;
+    color: var(--gray-mid);
+    border: 1px solid rgba(255,255,255,0.06);
     border-radius: var(--radius-sm);
-    font-family: 'Orbitron', monospace;
-    font-size: 0.65rem;
-    font-weight: 700;
+    font-family: var(--font);
+    font-size: 0.7rem;
+    font-weight: 600;
     cursor: pointer;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    transition: all .2s;
+    letter-spacing: 1px;
+    transition: all .15s;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
   }
-  .clear-btn:active { background: rgba(255,59,92,0.15); }
+  .clear-btn:active { border-color: rgba(255,255,255,0.12); color: var(--error); }
 
   /* ── Leaderboard ── */
-  .leaderboard { display: flex; flex-direction: column; gap: 10px; }
+  .lb-list { display: flex; flex-direction: column; gap: 10px; }
 
-  .lb-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
+  .lb-card {
     background: var(--card);
     border-radius: var(--radius);
     padding: 16px 18px;
-    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border);
     transition: all .2s;
     position: relative;
     overflow: hidden;
   }
-  .lb-row:first-child {
-    border: 1px solid rgba(198,255,0,0.2);
-    box-shadow: 0 4px 24px rgba(198,255,0,0.1);
+  .lb-card.lb-first {
+    border-color: rgba(200,224,0,0.12);
+    background: linear-gradient(135deg, #16191C 0%, #1a1d0f 100%);
   }
-  .lb-row.tie { border-left: 4px solid var(--accent); }
+  .lb-card.lb-first::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+  .lb-card.lb-tie { border-left: 3px solid var(--accent); }
 
+  .lb-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
   .lb-rank {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 900;
-    min-width: 40px;
+    min-width: 32px;
     text-align: center;
     line-height: 1;
+    font-feature-settings: "tnum";
   }
-  .lb-rank.gold { color: var(--accent); text-shadow: 0 0 16px var(--accent-glow); }
-  .lb-rank.silver { color: #7A8BA8; }
+  .lb-rank.gold { color: var(--accent); }
+  .lb-rank.silver { color: var(--gray-light); }
   .lb-rank.bronze { color: #CD7F32; }
-  .lb-rank.normal { color: var(--text-muted); }
+  .lb-rank.normal { color: var(--gray-mid); }
 
   .lb-avatar {
-    width: 44px;
-    height: 44px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Orbitron', monospace;
-    font-size: 1rem;
-    font-weight: 800;
-    color: white;
     flex-shrink: 0;
-    background: linear-gradient(135deg, var(--bg), #0f2a50);
-    border: 2px solid rgba(255,255,255,0.1);
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--white);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    line-height: 1;
   }
-  .lb-row:first-child .lb-avatar {
-    border-color: var(--accent);
-    box-shadow: 0 0 16px var(--accent-glow);
-    background: linear-gradient(135deg, var(--bg), #1a2a1a);
+  .lb-card.lb-first .lb-avatar {
+    background: rgba(200,224,0,0.08);
+    border-color: rgba(200,224,0,0.2);
+    color: var(--accent);
   }
 
   .lb-info {
@@ -685,198 +690,225 @@
     min-width: 0;
   }
   .lb-info .lb-team {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--text-dark);
+    color: var(--white);
+    letter-spacing: -0.2px;
   }
   .lb-info .lb-players {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-muted);
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: var(--gray-mid);
     margin-top: 1px;
   }
-
-  .lb-progress {
-    width: 80px;
-    height: 6px;
-    background: rgba(11,30,60,0.08);
+  .lb-info .lb-progress {
+    margin-top: 6px;
+    height: 4px;
+    background: rgba(255,255,255,0.04);
     border-radius: 10px;
     overflow: hidden;
-    flex-shrink: 0;
+    max-width: 120px;
   }
-  .lb-progress .lb-progress-fill {
+  .lb-info .lb-progress .lb-progress-fill {
     height: 100%;
     border-radius: 10px;
-    background: linear-gradient(90deg, var(--accent), var(--blue));
-    transition: width .6s ease;
+    background: linear-gradient(90deg, var(--accent), var(--secondary));
+    transition: width .5s ease;
   }
-  .lb-row:first-child .lb-progress .lb-progress-fill {
+  .lb-card.lb-first .lb-progress .lb-progress-fill {
     box-shadow: 0 0 8px var(--accent-glow);
   }
 
+  .lb-score {
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .lb-score .lb-score-value {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+    font-feature-settings: "tnum";
+  }
+  .lb-score .lb-score-label {
+    font-size: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--gray-mid);
+    margin-top: 1px;
+  }
+
+  .lb-holes {
+    display: flex;
+    gap: 3px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.03);
+  }
+  .lb-holes .lb-hole-dot {
+    width: 100%;
+    height: 4px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    transition: background .2s;
+  }
+  .lb-holes .lb-hole-dot.done {
+    background: rgba(200,224,0,0.3);
+  }
+  .lb-holes .lb-hole-dot.active {
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent-glow);
+  }
+
+  /* ── Empty state ── */
   .empty-state {
     text-align: center;
     padding: 60px 20px;
-    color: var(--text-secondary);
-    background: rgba(255,255,255,0.03);
+    color: var(--gray-mid);
+    background: var(--card);
     border-radius: var(--radius);
-    border: 1px dashed var(--border);
-    font-size: 0.9rem;
+    border: 1px dashed rgba(255,255,255,0.04);
+    font-size: 0.85rem;
     font-weight: 500;
-    opacity: 0.6;
   }
-  .empty-state .icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .empty-state .icon { font-size: 2rem; margin-bottom: 10px; opacity: 0.4; }
 
   /* ── Toast ── */
   .toast {
     position: fixed;
-    bottom: 80px;
+    bottom: 88px;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--bg);
+    background: var(--card);
     color: var(--accent);
-    padding: 12px 28px;
-    border-radius: 30px;
-    border: 1px solid rgba(198,255,0,0.2);
-    font-family: 'Orbitron', monospace;
-    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 1px solid rgba(200,224,0,0.12);
+    font-family: var(--font);
+    font-weight: 600;
     font-size: 0.75rem;
     opacity: 0;
-    transition: opacity .3s ease, transform .3s ease;
+    transition: opacity .25s ease, transform .25s ease;
     pointer-events: none;
     z-index: 999;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    white-space: nowrap;
   }
   .toast.show { opacity: 1; }
 
   /* ── Reset ── */
   .reset-all-btn {
     position: fixed;
-    bottom: 80px;
-    left: 16px;
-    background: rgba(255,255,255,0.04);
-    color: var(--text-muted);
+    bottom: 86px;
+    left: 24px;
+    background: rgba(255,255,255,0.02);
+    color: var(--gray-mid);
     border: 1px solid var(--border);
-    padding: 8px 12px;
-    border-radius: 12px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.6rem;
-    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-family: var(--font);
+    font-size: 0.55rem;
+    font-weight: 500;
     cursor: pointer;
     opacity: 0.3;
     transition: opacity .2s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
   }
   .reset-all-btn:active { opacity: 0.8; }
 
-  /* ── Animations ── */
-  .team-card, .hole-card, .lb-row {
-    animation: fadeIn .35s ease backwards;
-  }
-  .team-card:nth-child(1) { animation-delay: 0s; }
-  .team-card:nth-child(2) { animation-delay: .04s; }
-  .team-card:nth-child(3) { animation-delay: .08s; }
-  .team-card:nth-child(4) { animation-delay: .12s; }
-  .team-card:nth-child(5) { animation-delay: .16s; }
-  .team-card:nth-child(6) { animation-delay: .20s; }
-  .team-card:nth-child(7) { animation-delay: .24s; }
-
-  .hole-card:nth-child(1) { animation-delay: 0s; }
-  .hole-card:nth-child(2) { animation-delay: .03s; }
-  .hole-card:nth-child(3) { animation-delay: .06s; }
-  /* nth-child not feasible for dynamic lists, using inline style in JS */
-
-  .lb-row:nth-child(1) { animation-delay: 0s; }
-  .lb-row:nth-child(2) { animation-delay: .06s; }
-  .lb-row:nth-child(3) { animation-delay: .12s; }
-  .lb-row:nth-child(4) { animation-delay: .18s; }
-  .lb-row:nth-child(5) { animation-delay: .24s; }
-  .lb-row:nth-child(6) { animation-delay: .30s; }
-  .lb-row:nth-child(7) { animation-delay: .36s; }
-
   /* ── Scrollbar ── */
-  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar { width: 3px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.04); border-radius: 10px; }
 
   /* ── Lucide icon sizing ── */
-  .nav-btn i, .back-btn i, .footer-actions button i, .clear-btn i, .reset-all-btn i {
-    width: 18px; height: 18px;
-    display: inline-block;
-    vertical-align: middle;
-  }
-  .nav-btn i { width: 20px; height: 20px; }
+  i { display: inline-flex; }
 </style>
 </head>
 <body>
 
-<div class="app">
+<div class="app-wrap">
 
-<div class="header">
-  <h1>PUBGOLF</h1>
-  <p>Wageningen &#8226; 2026</p>
-</div>
-
-<div class="page-content">
-<div id="view-admin" class="view active">
-  <div id="admin-teams" class="view-sub active">
-    <div class="view-label">&#9670; Kies een team</div>
-    <div class="team-grid" id="teamGrid"></div>
-  </div>
-  <div id="admin-scores" class="view-sub">
-    <button class="back-btn" onclick="showTeams()">
-      <i data-lucide="arrow-left"></i> Teams
-    </button>
-    <div class="admin-header">
-      <div>
-        <h2 id="scoreTeamName"></h2>
-        <div class="team-subtitle" id="scoreTeamPlayers"></div>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-logo"><span>H</span></div>
+      <div class="header-text">
+        <div class="ht-title"><span class="ht-accent">PUB</span>GOLF</div>
+        <div class="ht-sub">De Haagse Hogeschool</div>
       </div>
     </div>
-    <div class="score-list" id="scoreList"></div>
-    <div class="footer-actions">
-      <button class="save-btn" onclick="saveCurrentScores()">
-        <i data-lucide="save"></i> Opslaan
-      </button>
+    <div class="header-status">
+      <div class="hs-label">Golfers</div>
+      <div class="hs-value">14</div>
     </div>
-    <button class="clear-btn" onclick="clearCurrentScores()">
-      <i data-lucide="trash-2"></i> Alles wissen
-    </button>
   </div>
-</div>
+  <div class="header-divider"></div>
 
-<div id="view-public" class="view">
-  <div class="view-label">&#9670; Live stand</div>
-  <div class="leaderboard" id="leaderboard"></div>
-  <div class="empty-state" id="lbEmpty">
-    <div class="icon">&#127942;</div>
-    Nog geen scores ingevoerd
+  <!-- Content -->
+  <div class="content">
+
+    <!-- LEADERBOARD -->
+    <div id="view-leaderboard" class="view active">
+      <div class="view-title">&#9679; Live Stand</div>
+      <div class="lb-list" id="lb-list"></div>
+      <div class="empty-state" id="lb-empty">
+        <div class="icon">&#9740;</div>
+        Nog geen scores ingevoerd
+      </div>
+    </div>
+
+    <!-- SCORE -->
+    <div id="view-score" class="view">
+      <div id="score-teams" class="view-sub active">
+        <div class="view-title">&#9679; Selecteer team</div>
+        <div class="team-grid" id="team-grid"></div>
+      </div>
+      <div id="score-holes" class="view-sub">
+        <button class="back-btn" onclick="showTeams()">
+          <i data-lucide="chevron-left"></i> Teams
+        </button>
+        <div class="score-header" id="score-header">
+          <div class="sh-left">
+            <div class="sh-avatar" id="sh-avatar">1</div>
+            <div class="sh-info">
+              <div class="sh-name" id="sh-name"></div>
+              <div class="sh-players" id="sh-players"></div>
+            </div>
+          </div>
+          <div class="sh-total">
+            <div class="sh-total-label">Totaal</div>
+            <div class="sh-total-value" id="sh-total">-</div>
+          </div>
+        </div>
+        <div class="hole-list" id="hole-list"></div>
+        <div class="footer-actions">
+          <button class="save-btn" onclick="saveCurrentScores()">
+            <i data-lucide="check"></i> Opslaan
+          </button>
+        </div>
+        <button class="clear-btn" onclick="clearCurrentScores()">
+          <i data-lucide="trash-2"></i> Alles wissen
+        </button>
+      </div>
+    </div>
+
   </div>
-</div>
+
 </div>
 
-</div><!-- /app -->
-
-<div class="nav-bar">
-  <button class="nav-btn active" data-view="admin" onclick="switchView('admin')">
-    <i data-lucide="pen-square"></i> Admin
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <button class="nav-btn active" data-view="leaderboard" onclick="switchView('leaderboard')">
+    <i data-lucide="trophy"></i> Stand
   </button>
-  <button class="nav-btn" data-view="public" onclick="switchView('public')">
-    <i data-lucide="trophy"></i> Scoreboard
+  <button class="nav-btn" data-view="score" onclick="switchView('score')">
+    <i data-lucide="edit-3"></i> Score
   </button>
 </div>
 
 <div class="toast" id="toast"></div>
-<button class="reset-all-btn" onclick="resetAll()">
-  <i data-lucide="refresh-cw"></i> Reset
-</button>
+<button class="reset-all-btn" onclick="resetAll()">Reset</button>
 
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <script>
@@ -911,93 +943,37 @@ const PUBS = [
 ];
 
 const CHALLENGES = [
-  {
-    id: 'huisfavoriet',
-    name: 'Huisfavoriet',
-    description: 'Vraag aan de bar wat hier het huisdrankje is. Bestel het als team en noteer de naam.',
-    scoring: 'Elke slok is een slag',
-    difficulty: 'NORMAAL',
-    items: [
-      { type: 'bonus', label: 'Prijs exact geraden vooraf', points: -1 },
-      { type: 'penalty', label: 'Naam van het drankje vergeten', points: 1 },
-    ],
-  },
-  {
-    id: 'wat-kost-de-schade',
-    name: 'Wat kost de schade',
-    description: "Raad vóór het bestellen wat jullie hele ronde gaat kosten. Schrijf het op vóór de bar het zegt.",
-    scoring: 'Eén gok per team',
-    difficulty: 'NORMAAL',
-    items: [
-      { type: 'bonus', label: 'Dichtstbijzijnde team', points: -1 },
-      { type: 'bonus', label: 'Exact geraden', points: -2 },
-      { type: 'penalty', label: 'Verste ernaast', points: 1 },
-    ],
-  },
-  {
-    id: 'verkoop-dat-glas',
-    name: 'Verkoop dat glas',
-    description: 'Geef jullie drankje een veel te serieuze verkooppitch van maximaal 20 seconden. Andere teams jureren.',
-    scoring: 'Beste pitch wint',
-    difficulty: 'NORMAAL',
-    items: [
-      { type: 'bonus', label: 'Beste pitch (meeste stemmen)', points: -1 },
-      { type: 'penalty', label: 'Lafste (geen poging)', points: 1 },
-    ],
-  },
-  {
-    id: 'geen-veilige-keuze',
-    name: 'Geen veilige keuze',
-    description: 'Kies het drankje met de meest overdreven naam op de kaart. Iets dat je normaal nooit zou nemen.',
-    scoring: 'Standaard scoring',
-    difficulty: 'FANATIEK',
-    items: [
-      { type: 'bonus', label: 'Ander team noemt jullie keuze de gekste', points: -1 },
-      { type: 'penalty', label: 'Stiekem toch een veilige keuze', points: 2 },
-    ],
-  },
-  {
-    id: 'alles-of-niks',
-    name: 'Alles of niks',
-    description: 'Roep de hole-in-one vóór je begint: het hele drankje in één teug, geen pauzes.',
-    scoring: 'Elke slok is een slag',
-    difficulty: 'FANATIEK',
-    items: [
-      { type: 'bonus', label: 'Hole-in-one gelukt (in één teug)', points: -1 },
-      { type: 'penalty', label: 'Aangekondigd maar afgebroken', points: 1 },
-    ],
-  },
-  {
-    id: 'caddie-offer',
-    name: 'Caddie-offer',
-    description: 'Wijs één teamlid aan als caddie voor deze hole. Die persoon houdt score bij en mag één strafslag van het team verplaatsen naar een ander teamlid.',
-    scoring: 'Standaard scoring per hole',
-    difficulty: 'CHAOS',
-    items: [
-      { type: 'penalty', label: 'Caddie maakt rekenfout', points: 1 },
-    ],
-  },
-  {
-    id: 'sabotageronde',
-    name: 'Sabotageronde',
-    description: 'Het team rechts van jullie kiest één drankje van de kaart dat jullie team moet bestellen. Geen extreme keuzes.',
-    scoring: 'Elke slok is een slag',
-    difficulty: 'FANATIEK',
-    items: [
-      { type: 'penalty', label: 'Geweigerd', points: 2 },
-    ],
-  },
-  {
-    id: 'stille-hole',
-    name: 'Stille hole',
-    description: 'Communiceer onderling alleen via gebaren. Aan de bar gewoon vriendelijk praten.',
-    scoring: 'Standaard scoring',
-    difficulty: 'CHAOS',
-    items: [
-      { type: 'bonus', label: 'Hele hole onderling stil geweest', points: -2 },
-      { type: 'penalty', label: 'Onderling gepraat (per overtreding)', points: 1 },
-    ],
-  },
+  { id: 'huisfavoriet', name: 'Huisfavoriet', description: 'Vraag aan de bar wat hier het huisdrankje is. Bestel het als team en noteer de naam.', scoring: 'Elke slok is een slag', difficulty: 'NORMAAL', items: [
+    { type: 'bonus', label: 'Prijs exact geraden vooraf', points: -1 },
+    { type: 'penalty', label: 'Naam van het drankje vergeten', points: 1 },
+  ]},
+  { id: 'wat-kost-de-schade', name: 'Wat kost de schade', description: "Raad vóór het bestellen wat jullie hele ronde gaat kosten. Schrijf het op vóór de bar het zegt.", scoring: 'Eén gok per team', difficulty: 'NORMAAL', items: [
+    { type: 'bonus', label: 'Dichtstbijzijnde team', points: -1 },
+    { type: 'bonus', label: 'Exact geraden', points: -2 },
+    { type: 'penalty', label: 'Verste ernaast', points: 1 },
+  ]},
+  { id: 'verkoop-dat-glas', name: 'Verkoop dat glas', description: 'Geef jullie drankje een veel te serieuze verkooppitch van maximaal 20 seconden. Andere teams jureren.', scoring: 'Beste pitch wint', difficulty: 'NORMAAL', items: [
+    { type: 'bonus', label: 'Beste pitch (meeste stemmen)', points: -1 },
+    { type: 'penalty', label: 'Lafste (geen poging)', points: 1 },
+  ]},
+  { id: 'geen-veilige-keuze', name: 'Geen veilige keuze', description: 'Kies het drankje met de meest overdreven naam op de kaart. Iets dat je normaal nooit zou nemen.', scoring: 'Standaard scoring', difficulty: 'FANATIEK', items: [
+    { type: 'bonus', label: 'Ander team noemt jullie keuze de gekste', points: -1 },
+    { type: 'penalty', label: 'Stiekem toch een veilige keuze', points: 2 },
+  ]},
+  { id: 'alles-of-niks', name: 'Alles of niks', description: 'Roep de hole-in-one vóór je begint: het hele drankje in één teug, geen pauzes.', scoring: 'Elke slok is een slag', difficulty: 'FANATIEK', items: [
+    { type: 'bonus', label: 'Hole-in-one gelukt (in één teug)', points: -1 },
+    { type: 'penalty', label: 'Aangekondigd maar afgebroken', points: 1 },
+  ]},
+  { id: 'caddie-offer', name: 'Caddie-offer', description: 'Wijs één teamlid aan als caddie voor deze hole. Die persoon houdt score bij en mag één strafslag van het team verplaatsen naar een ander teamlid.', scoring: 'Standaard scoring per hole', difficulty: 'CHAOS', items: [
+    { type: 'penalty', label: 'Caddie maakt rekenfout', points: 1 },
+  ]},
+  { id: 'sabotageronde', name: 'Sabotageronde', description: 'Het team rechts van jullie kiest één drankje van de kaart dat jullie team moet bestellen. Geen extreme keuzes.', scoring: 'Elke slok is een slag', difficulty: 'FANATIEK', items: [
+    { type: 'penalty', label: 'Geweigerd', points: 2 },
+  ]},
+  { id: 'stille-hole', name: 'Stille hole', description: 'Communiceer onderling alleen via gebaren. Aan de bar gewoon vriendelijk praten.', scoring: 'Standaard scoring', difficulty: 'CHAOS', items: [
+    { type: 'bonus', label: 'Hele hole onderling stil geweest', points: -2 },
+    { type: 'penalty', label: 'Onderling gepraat (per overtreding)', points: 1 },
+  ]},
 ];
 
 const PUB_CHALLENGE_IDS = [
@@ -1008,24 +984,66 @@ const PUB_CHALLENGE_IDS = [
 ];
 
 // ========== STATE ==========
-let scores = loadScores();
-let challengeToggles = loadToggles();
+let scores = {};
+let challengeToggles = {};
 let currentTeamId = null;
 let expandedPubId = null;
+let syncVersion = 0;
+let syncTimer = null;
+const API = '/api/data';
 
 // ========== STORAGE ==========
-function loadScores() {
-  try { return JSON.parse(localStorage.getItem('pubgolf_scores')) || {}; } catch { return {}; }
+async function loadData() {
+  try {
+    const r = await fetch(API);
+    const data = await r.json();
+    scores = data.scores || {};
+    challengeToggles = data.toggles || {};
+    syncVersion = data.version || 0;
+  } catch {
+    // fallback to localStorage
+    try {
+      scores = JSON.parse(localStorage.getItem('pubgolf_scores')) || {};
+      challengeToggles = JSON.parse(localStorage.getItem('pubgolf_toggles')) || {};
+    } catch { scores = {}; challengeToggles = {}; }
+  }
+  renderTeams();
+  renderLeaderboard();
 }
-function saveScores() {
-  localStorage.setItem('pubgolf_scores', JSON.stringify(scores));
+
+function saveData() {
+  const body = JSON.stringify({ scores, toggles: challengeToggles, version: syncVersion + 1 });
+  syncVersion++;
+  fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }).catch(() => {});
+  // also keep localStorage as backup
+  try {
+    localStorage.setItem('pubgolf_scores', JSON.stringify(scores));
+    localStorage.setItem('pubgolf_toggles', JSON.stringify(challengeToggles));
+  } catch {}
 }
-function loadToggles() {
-  try { return JSON.parse(localStorage.getItem('pubgolf_toggles')) || {}; } catch { return {}; }
+
+function pollData() {
+  fetch(API).then(r => r.json()).then(data => {
+    if (data.version && data.version > syncVersion) {
+      scores = data.scores || {};
+      challengeToggles = data.toggles || {};
+      syncVersion = data.version || 0;
+      renderTeams();
+      renderLeaderboard();
+      if (currentTeamId) renderScoreList();
+    }
+  }).catch(() => {});
 }
-function saveToggles() {
-  localStorage.setItem('pubgolf_toggles', JSON.stringify(challengeToggles));
+
+function startSync() {
+  loadData();
+  if (syncTimer) clearInterval(syncTimer);
+  syncTimer = setInterval(pollData, 3000);
 }
+// Also poll on visibility change (user comes back to tab)
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) pollData();
+});
 
 // ========== HELPERS ==========
 function getChallenge(pubId) {
@@ -1081,14 +1099,21 @@ function getPubCount(teamId) {
 
 // ========== RENDER ==========
 function renderTeams() {
-  const grid = document.getElementById('teamGrid');
+  const grid = document.getElementById('team-grid');
   grid.innerHTML = TEAMS.map(t => {
     const total = getTeamTotal(t.id);
     const has = hasAnyScores(t.id);
     return `<div class="team-card${has ? ' has-scores' : ''}" onclick="openTeam(${t.id})">
-      <div class="team-nr">${t.name}</div>
-      <div class="team-name">${t.players}</div>
-      ${total !== null ? `<div class="total-badge">${total}</div>` : ''}
+      <div class="team-card-left">
+        <div class="team-avatar">${t.id}</div>
+        <div class="team-card-info">
+          <div class="tc-name">${t.players}</div>
+          <div class="tc-players">${t.name}</div>
+        </div>
+      </div>
+      <div class="team-card-right">
+        ${total !== null ? `<div class="tc-score">${total}</div><div class="tc-label">slagen</div>` : '<div style="font-size:0.7rem;color:var(--gray-mid);font-weight:600;">—</div>'}
+      </div>
     </div>`;
   }).join('');
 }
@@ -1097,18 +1122,18 @@ function openTeam(teamId) {
   currentTeamId = teamId;
   expandedPubId = null;
   const t = TEAMS.find(x => x.id === teamId);
-  document.getElementById('scoreTeamName').textContent = t.name;
-  document.getElementById('scoreTeamPlayers').textContent = t.players;
+  document.getElementById('sh-avatar').textContent = t.id;
+  document.getElementById('sh-name').textContent = t.players;
+  document.getElementById('sh-players').textContent = t.name;
   if (!scores[teamId]) scores[teamId] = {};
   if (!challengeToggles[teamId]) challengeToggles[teamId] = {};
   renderScoreList();
-  document.getElementById('admin-teams').classList.remove('active');
-  document.getElementById('admin-scores').classList.add('active');
-  lucide.createIcons();
+  document.getElementById('score-teams').classList.remove('active');
+  document.getElementById('score-holes').classList.add('active');
 }
 
 function renderScoreList() {
-  const list = document.getElementById('scoreList');
+  const list = document.getElementById('hole-list');
   const teamId = currentTeamId;
   let html = '';
 
@@ -1121,22 +1146,19 @@ function renderScoreList() {
     const isExpanded = expandedPubId === i;
     const ch = getChallenge(i);
 
-    html += `<div class="hole-card${isExpanded ? ' hole-expanded' : ''}" style="animation:fadeIn .3s ease backwards;animation-delay:${i * 0.03}s">`;
+    html += `<div class="hole-card${isExpanded ? ' hole-expanded' : ''}">`;
     html += `<div class="hole-main">`;
-    html += `<div class="hole-nr-wrap">
-      <div class="hole-label">Hole</div>
-      <div class="hole-nr">${String(i + 1).padStart(2, '0')}</div>
-    </div>`;
+    html += `<div class="hole-nr">${String(i + 1).padStart(2, '0')}</div>`;
     html += `<div class="hole-info">
       <div class="hole-pub" onclick="toggleChallenge(${i})">${pub}</div>`;
     if (ch) {
-      html += `<div class="hole-challenge">
-        <span class="ch-tag">${ch.name}</span>
-        <span class="diff-tag ${ch.difficulty.toLowerCase()}">${ch.difficulty}</span>
+      html += `<div class="hole-meta">
+        <span class="hole-challenge">${ch.name}</span>
+        <span class="hole-diff ${ch.difficulty.toLowerCase()}">${ch.difficulty}</span>
       </div>`;
     }
     html += `</div>`;
-    html += `<div class="hole-score-wrap">
+    html += `<div class="hole-score">
       <input type="number" min="1" max="30" inputmode="numeric" placeholder="-" value="${val}"
         oninput="onScoreInput(${teamId}, ${i}, this.value)">
       <div class="adj-badge ${adjClass}">${adjDisplay || '0'}</div>
@@ -1147,35 +1169,35 @@ function renderScoreList() {
     html += `<div class="challenge-panel${isExpanded ? ' open' : ''}">`;
     if (ch) {
       const done = (challengeToggles[teamId] && challengeToggles[teamId][i]) || [];
-      html += `<div class="ch-name">${ch.name}</div>`;
-      html += `<div class="ch-desc">${ch.description}</div>`;
-      html += `<div class="ch-scoring"><strong>Score:</strong> ${ch.scoring}</div>`;
+      html += `<div class="cp-name">${ch.name}</div>`;
+      html += `<div class="cp-desc">${ch.description}</div>`;
+      html += `<div class="cp-scoring"><strong>Score:</strong> ${ch.scoring}</div>`;
 
       const bonuses = ch.items.filter(it => it.type === 'bonus');
       const penalties = ch.items.filter(it => it.type === 'penalty');
 
       if (bonuses.length > 0) {
-        html += `<div class="ch-section-title bonus">&#11088; Bonussen</div>`;
+        html += `<div class="cp-section bonus">Bonussen</div>`;
         bonuses.forEach((item) => {
           const globalIdx = ch.items.indexOf(item);
           const isDone = done.includes(globalIdx);
           const ptsDisplay = item.points < 0 ? item.points : '+' + item.points;
-          html += `<div class="ch-item${isDone ? ' done' : ''}" onclick="toggleItem(${teamId}, ${i}, ${globalIdx})">
-            <span class="ch-label"><span class="check"></span>${item.label}</span>
-            <span class="ch-pts neg">${ptsDisplay}</span>
+          html += `<div class="cp-item${isDone ? ' done' : ''}" onclick="toggleItem(${teamId}, ${i}, ${globalIdx})">
+            <span class="cp-label"><span class="check"></span>${item.label}</span>
+            <span class="cp-pts neg">${ptsDisplay}</span>
           </div>`;
         });
       }
 
       if (penalties.length > 0) {
-        html += `<div class="ch-section-title penalty">&#9888; Strafslagen</div>`;
+        html += `<div class="cp-section penalty">Strafslagen</div>`;
         penalties.forEach((item) => {
           const globalIdx = ch.items.indexOf(item);
           const isDone = done.includes(globalIdx);
           const ptsDisplay = item.points > 0 ? '+' + item.points : item.points;
-          html += `<div class="ch-item${isDone ? ' done' : ''}" onclick="toggleItem(${teamId}, ${i}, ${globalIdx})">
-            <span class="ch-label"><span class="check"></span>${item.label}</span>
-            <span class="ch-pts pos">${ptsDisplay}</span>
+          html += `<div class="cp-item${isDone ? ' done' : ''}" onclick="toggleItem(${teamId}, ${i}, ${globalIdx})">
+            <span class="cp-label"><span class="check"></span>${item.label}</span>
+            <span class="cp-pts pos">${ptsDisplay}</span>
           </div>`;
         });
       }
@@ -1185,9 +1207,10 @@ function renderScoreList() {
   });
 
   const total = getTeamTotal(teamId);
+  document.getElementById('sh-total').textContent = total !== null ? total : '-';
   html += `<div class="total-row">
-    <span class="label">Eindtotaal</span>
-    <span class="value">${total !== null ? total : '--'}</span>
+    <span class="tr-label">Eindtotaal</span>
+    <span class="tr-value">${total !== null ? total : '—'}</span>
   </div>`;
 
   list.innerHTML = html;
@@ -1207,7 +1230,7 @@ function toggleItem(teamId, pubId, itemIdx) {
   const idx = arr.indexOf(itemIdx);
   if (idx === -1) arr.push(itemIdx);
   else arr.splice(idx, 1);
-  saveToggles();
+  saveData();
   renderScoreList();
   renderLeaderboard();
   renderTeams();
@@ -1216,16 +1239,15 @@ function toggleItem(teamId, pubId, itemIdx) {
 function onScoreInput(teamId, pubId, val) {
   if (!scores[teamId]) scores[teamId] = {};
   scores[teamId][pubId] = val;
-  saveScores();
+  saveData();
   renderScoreList();
   renderLeaderboard();
   renderTeams();
 }
 
 function saveCurrentScores() {
-  saveScores();
-  saveToggles();
-  showToast('Scores opgeslagen!');
+  saveData();
+  showToast('Opgeslagen');
 }
 
 function clearCurrentScores() {
@@ -1233,8 +1255,7 @@ function clearCurrentScores() {
   if (!confirm('Weet je zeker dat je alle scores voor dit team wilt wissen?')) return;
   scores[currentTeamId] = {};
   challengeToggles[currentTeamId] = {};
-  saveScores();
-  saveToggles();
+  saveData();
   renderScoreList();
   renderLeaderboard();
   renderTeams();
@@ -1243,16 +1264,15 @@ function clearCurrentScores() {
 function showTeams() {
   currentTeamId = null;
   expandedPubId = null;
-  document.getElementById('admin-scores').classList.remove('active');
-  document.getElementById('admin-teams').classList.add('active');
+  document.getElementById('score-holes').classList.remove('active');
+  document.getElementById('score-teams').classList.add('active');
   renderTeams();
-  lucide.createIcons();
 }
 
 // ========== LEADERBOARD ==========
 function renderLeaderboard() {
-  const container = document.getElementById('leaderboard');
-  const empty = document.getElementById('lbEmpty');
+  const container = document.getElementById('lb-list');
+  const empty = document.getElementById('lb-empty');
 
   const ranked = TEAMS
     .map(t => ({ ...t, total: getTeamTotal(t.id) }))
@@ -1280,30 +1300,34 @@ function renderLeaderboard() {
     else if (currentRank === 2) rankClass = 'silver';
     else if (currentRank === 3) rankClass = 'bronze';
 
-    // Progress bar based on inverse rank position (visual only)
     const progressPct = Math.max(20, Math.round((1 - (currentRank - 1) / maxRank) * 85));
 
-    // Avatar gradient based on team id
-    const avatarColors = [
-      'linear-gradient(135deg,#0B1E3C,#1a3a5a)',
-      'linear-gradient(135deg,#0B1E3C,#2a1a3a)',
-      'linear-gradient(135deg,#0B1E3C,#1a3a2a)',
-      'linear-gradient(135deg,#0B1E3C,#3a1a1a)',
-      'linear-gradient(135deg,#0B1E3C,#1a2a3a)',
-      'linear-gradient(135deg,#0B1E3C,#3a2a1a)',
-      'linear-gradient(135deg,#0B1E3C,#1a1a2a)',
-    ];
+    // Hole completion dots
+    const completed = getPubCount(t.id);
+    let dots = '';
+    for (let h = 0; h < PUBS.length; h++) {
+      if (h < completed) dots += '<div class="lb-hole-dot done"></div>';
+      else if (h === completed) dots += '<div class="lb-hole-dot active"></div>';
+      else dots += '<div class="lb-hole-dot"></div>';
+    }
 
-    return `<div class="lb-row${isTie ? ' tie' : ''}">
-      <div class="lb-rank ${rankClass}">${currentRank}</div>
-      <div class="lb-avatar" style="background:${avatarColors[t.id - 1] || avatarColors[0]}">${t.id}</div>
-      <div class="lb-info">
-        <div class="lb-team">${t.name}</div>
-        <div class="lb-players">${t.players}</div>
+    return `<div class="lb-card${currentRank === 1 ? ' lb-first' : ''}${isTie ? ' lb-tie' : ''}">
+      <div class="lb-main">
+        <div class="lb-rank ${rankClass}">${currentRank}</div>
+        <div class="lb-avatar">${t.id}</div>
+        <div class="lb-info">
+          <div class="lb-team">${t.name}</div>
+          <div class="lb-players">${t.players}</div>
+          <div class="lb-progress">
+            <div class="lb-progress-fill" style="width:${progressPct}%"></div>
+          </div>
+        </div>
+        <div class="lb-score">
+          <div class="lb-score-value">${t.total}</div>
+          <div class="lb-score-label">slagen</div>
+        </div>
       </div>
-      <div class="lb-progress">
-        <div class="lb-progress-fill" style="width:${progressPct}%"></div>
-      </div>
+      <div class="lb-holes">${dots}</div>
     </div>`;
   }).join('');
 }
@@ -1314,8 +1338,8 @@ function switchView(view) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('view-' + view).classList.add('active');
   document.querySelector('.nav-btn[data-view="' + view + '"]').classList.add('active');
-  if (view === 'public') renderLeaderboard();
-  if (view === 'admin') renderTeams();
+  if (view === 'leaderboard') renderLeaderboard();
+  if (view === 'score') renderTeams();
   lucide.createIcons();
 }
 
@@ -1324,15 +1348,15 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  setTimeout(() => t.classList.remove('show'), 2200);
 }
 
 function resetAll() {
   if (!confirm('Weet je zeker dat je ALLES wilt resetten?')) return;
   scores = {};
   challengeToggles = {};
-  saveScores();
-  saveToggles();
+  syncVersion++;
+  saveData();
   renderTeams();
   renderLeaderboard();
   if (currentTeamId) showTeams();
@@ -1340,8 +1364,7 @@ function resetAll() {
 }
 
 // ========== INIT ==========
-renderTeams();
-renderLeaderboard();
+startSync();
 lucide.createIcons();
 </script>
 </body>
